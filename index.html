@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0047)file:///C:/Users/Lambek/Downloads/index_19.html -->
+<!-- saved from url=(0047)file:///C:/Users/Lambek/Downloads/index_20.html -->
 <html lang="da"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -1207,10 +1207,11 @@ async function handleImageFile(file){
   };
   reader.readAsDataURL(file);
 }
-async function callVisionAPI(b64,mime){ /* v4 */
-  const res=await fetch('https://tripbudget-api.peterlambek.workers.dev/',{method:'POST',
+async function callVisionAPI(b64,mime){
+  const WORKER='https://tripbudget-api.peterlambek.workers.dev/';
+  const res=await fetch(WORKER,{method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:150,messages:[{role:'user',content:[
+    body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:150,messages:[{role:'user',content:[
       {type:'image',source:{type:'base64',media_type:mime,data:b64}},
       {type:'text',text:'Look at this price tag or product image. Extract the item name and price. Reply ONLY with valid JSON, no markdown: {"name":"item name","price":9.99}. Use 0 if no price visible.'}
     ]}]})});
