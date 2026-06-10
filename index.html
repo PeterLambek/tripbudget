@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TripBudget">
+<title>TripBudget</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a14;--s1:#13131f;--s2:#1c1c2e;--s3:#25253d;--border:rgba(255,255,255,0.07);
+  --red:#ff6b6b;--yellow:#ffd166;--green:#06d6a0;--blue:#4cc9f0;--purple:#c77dff;
+  --text:#f0f0fa;--text2:#8888aa;--text3:#44445a;
+  --r:18px;--r-sm:12px;
+  --safe-top:env(safe-area-inset-top,0px);--safe-bot:env(safe-area-inset-bottom,0px);
+  --nav-h:62px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
+
+/* ── LAYOUT ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--s1);border-top:1px solid var(--border);padding-bottom:var(--safe-bot);z-index:50;height:var(--nav-h)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0;gap:3px;background:none;border:none;color:var(--text3);cursor:pointer;transition:color .2s;font-family:'Outfit',sans-serif}
+.nav-btn.active{color:var(--red)}
+.nav-btn .ni{font-size:22px}
+.nav-btn .nl{font-size:10px;font-weight:500;letter-spacing:0.3px}
+
+.screen{display:none;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:var(--nav-h)}
+.screen.active{display:flex}
+.topbar{flex-shrink:0;padding:calc(var(--safe-top) + 14px) 18px 12px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-bottom:1px solid var(--border)}
+.topbar-logo{font-size:20px;font-weight:700;letter-spacing:-0.5px}
+.topbar-logo span{color:var(--red)}
+.topbar-title{font-size:17px;font-weight:600}
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 24px}
+
+/* ── HOME / PROFILE SELECT ── */
+.home-welcome{text-align:center;padding:48px 24px 32px;display:flex;flex-direction:column;align-items:center}
+.home-logo-big{font-size:28px;font-weight:700;letter-spacing:-1px;margin-bottom:6px}
+.home-logo-big span{color:var(--red)}
+.home-sub{font-size:14px;color:var(--text3);margin-bottom:40px}
+.home-logo-icon{width:80px;height:80px;border-radius:50%;background:var(--s2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:20px}
+
+.avatar{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:white;position:relative;flex-shrink:0}
+.profile-name{font-size:13px;font-weight:500;color:var(--text2);text-align:center;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── PERSON VIEW ── */
+.pv-header{flex-shrink:0;background:var(--bg);border-bottom:1px solid var(--border);padding:calc(var(--safe-top) + 14px) 16px 0}
+.pv-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.pv-back{background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0;line-height:1}
+.pv-menu{background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1;letter-spacing:2px}
+.pv-avatar-row{display:flex;align-items:center;gap:14px;padding-bottom:16px}
+.pv-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:white;flex-shrink:0}
+.pv-info{flex:1;min-width:0}
+.pv-name{font-size:20px;font-weight:700;letter-spacing:-0.3px}
+.pv-budget-line{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* Budget ring summary */
+.pv-summary{display:flex;gap:12px;padding:14px 16px;background:var(--s1);border-bottom:1px solid var(--border);flex-shrink:0}
+.pv-stat{flex:1;text-align:center}
+.pv-stat-val{font-size:18px;font-weight:700;letter-spacing:-0.5px}
+.pv-stat-lbl{font-size:10px;color:var(--text3);margin-top:2px;font-weight:500;letter-spacing:0.5px;text-transform:uppercase}
+.pv-progress{height:4px;background:var(--s3);flex-shrink:0}
+.pv-progress-fill{height:100%;transition:width .5s ease}
+
+/* Tabs inside person view */
+.pv-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0}
+.pv-tab{flex:1;padding:12px 8px;text-align:center;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'Outfit',sans-serif}
+.pv-tab.active{color:var(--red);border-bottom-color:var(--red)}
+
+/* ── ADD ENTRY ── */
+.upload-tabs{display:flex;border-bottom:1px solid var(--border)}
+.upload-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;transition:all .2s;background:none;border:none;font-family:'Outfit',sans-serif}
+.upload-tab.active{color:var(--yellow);background:var(--s3)}
+.upload-body{padding:14px}
+.upload-trigger{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;width:100%;padding:10px 0}
+.upload-trigger .ui{font-size:28px}
+.upload-trigger .ut{font-size:13px;font-weight:500;color:var(--text2)}
+.upload-trigger .us{font-size:11px;color:var(--text3)}
+#camInput,#galleryInput{display:none}
+.preview-img{width:100%;border-radius:var(--r-sm);margin:0 0 10px;display:none;max-height:180px;object-fit:cover}
+.ai-processing{display:none;text-align:center;padding:14px;color:var(--text2);font-size:13px}
+.ai-processing .spin{font-size:24px;display:block;margin-bottom:6px;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-suggestion{display:none;background:var(--s2);border:1px solid var(--yellow);border-radius:var(--r-sm);padding:14px;margin-top:8px}
+.ai-tag{font-size:10px;font-weight:600;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+
+/* ── HISTORY ENTRIES ── */
+.entry-item{display:flex;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;margin-bottom:8px;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}}
+.entry-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.entry-info{flex:1;min-width:0}
+.entry-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.entry-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.entry-prices{text-align:right;flex-shrink:0}
+.entry-price-main{font-size:14px;font-weight:600;white-space:nowrap}
+.entry-price-sub{font-size:11px;color:var(--text3)}
+.entry-actions{display:flex;gap:2px;flex-shrink:0}
+.entry-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px;padding:5px;transition:color .2s}
+.entry-btn.edit:active{color:var(--yellow)}
+.entry-btn.del:active{color:var(--red)}
+.filter-row{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-chip{flex-shrink:0;padding:6px 14px;border-radius:50px;font-size:13px;font-weight:500;background:var(--s2);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.filter-chip.active{background:var(--red);border-color:var(--red);color:white}
+
+/* ── FIELDS ── */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.field-wrap{margin-bottom:14px}
+.field-label{font-size:12px;color:var(--text2);font-weight:500;margin-bottom:6px;display:block}
+.field-input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);padding:13px 14px;color:var(--text);font-family:'Outfit',sans-serif;font-size:15px;outline:none;transition:border-color .2s;appearance:none}
+.field-input:focus{border-color:var(--red)}
+.field-input::placeholder{color:var(--text3)}
+.field-select{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);padding:13px 14px;color:var(--text2);font-family:'Outfit',sans-serif;font-size:15px;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2388889a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.section-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1.2px;text-transform:uppercase}
+
+/* Buttons */
+.btn-primary{width:100%;padding:15px;background:var(--red);border:none;border-radius:var(--r-sm);color:white;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .15s;box-shadow:0 6px 20px rgba(255,107,107,.3)}
+.btn-primary:active{opacity:.85;transform:scale(.98)}
+.btn-secondary{width:100%;padding:13px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text2);font-family:'Outfit',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:background .2s;margin-top:8px}
+.btn-secondary:active{background:var(--s3)}
+.add-fab{position:fixed;bottom:calc(var(--nav-h) + 16px);right:18px;width:54px;height:54px;border-radius:50%;background:var(--red);border:none;color:white;font-size:26px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(255,107,107,.45);z-index:40;transition:transform .15s}
+.add-fab.visible{display:flex}
+.add-fab:active{transform:scale(.9)}
+
+/* ── CALCULATOR ── */
+.calc-display{background:var(--s2);border-radius:var(--r-sm);padding:20px 18px;margin-bottom:16px;text-align:right}
+.calc-amount{font-size:36px;font-weight:700;letter-spacing:-1px;color:var(--text);line-height:1}
+.calc-converted{font-size:18px;font-weight:600;color:var(--green);margin-top:6px}
+.calc-rate-info{font-size:11px;color:var(--text3);margin-top:4px}
+.calc-currency-row{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+.calc-sel{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);padding:11px 14px;color:var(--text2);font-family:'Outfit',sans-serif;font-size:14px;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2388889a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.calc-swap{width:38px;height:38px;border-radius:50%;background:var(--s3);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.calc-swap:active{color:var(--yellow);transform:rotate(180deg)}
+.calc-keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.calc-key{padding:15px 8px;background:var(--s2);border:none;border-radius:var(--r-sm);color:var(--text);font-family:'Outfit',sans-serif;font-size:18px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
+.calc-key:active{background:var(--s3);transform:scale(.93)}
+.calc-key.wide{grid-column:span 2;background:var(--s3)}
+.calc-key.action{background:var(--red);color:white}
+.quick-amounts{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none}
+.quick-amounts::-webkit-scrollbar{display:none}
+.quick-btn{flex-shrink:0;padding:7px 14px;border-radius:50px;background:var(--s2);border:1px solid var(--border);color:var(--text2);font-size:13px;cursor:pointer;white-space:nowrap}
+.quick-btn:active{background:var(--s3);color:var(--yellow)}
+
+/* ── SETTINGS ── */
+.person-setting-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.psc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.psc-name{font-size:16px;font-weight:600}
+.psc-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px}
+.psc-del:active{color:var(--red)}
+.cat-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.cat-tag{display:flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--border);border-radius:50px;padding:5px 10px;font-size:12px}
+.cat-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1}
+.cat-del:active{color:var(--red)}
+.cat-add-row{display:flex;gap:8px}
+.cat-input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;outline:none}
+.cat-add-btn{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--yellow);cursor:pointer;font-size:18px}
+.api-section{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.api-label{font-size:13px;font-weight:600;margin-bottom:4px}
+.api-sub{font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5}
+.api-input-wrap{position:relative}
+.api-input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 44px 12px 14px;color:var(--text);font-family:monospace;font-size:13px;outline:none}
+.api-input:focus{border-color:var(--blue)}
+.api-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px}
+.api-status{font-size:11px;margin-top:6px}
+.api-status.ok{color:var(--green)}
+.api-status.err{color:var(--red)}
+.add-person-btn{width:100%;padding:14px;background:var(--s1);border:2px dashed var(--border);border-radius:var(--r);color:var(--text2);cursor:pointer;font-size:14px;font-family:'Outfit',sans-serif;transition:all .2s}
+.add-person-btn:active{border-color:var(--green);color:var(--green)}
+
+/* Avatar color picker */
+.color-swatches{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.swatch{width:32px;height:32px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.swatch.selected{border-color:white;transform:scale(1.15)}
+
+/* ── TOAST & MODALS ── */
+.toast{position:fixed;bottom:calc(var(--nav-h) + 12px);left:50%;transform:translateX(-50%) translateY(16px);background:var(--s2);border:1px solid var(--border);border-radius:50px;padding:10px 22px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:opacity .25s,transform .25s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:200;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{width:100%;max-width:480px;background:var(--s1);border-radius:var(--r) var(--r) 0 0;border:1px solid var(--border);padding:22px 18px calc(var(--safe-bot) + 22px);max-height:88vh;overflow-y:auto;animation:slideUp .28s ease}
+@keyframes slideUp{from{transform:translateY(100%)}}
+.modal-title{font-size:17px;font-weight:600;margin-bottom:6px}
+.action-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .15s}
+.action-item:last-child{border-bottom:none}
+.action-item:active{opacity:.6}
+.action-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.action-info{flex:1}
+.action-title{font-size:15px;font-weight:500}
+.action-sub{font-size:12px;color:var(--text3);margin-top:2px}
+
+.empty{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty .ei{font-size:36px;margin-bottom:10px}
+.empty p{font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- ══ SCREEN: HOME (profile select) ══ -->
+<div class="screen active" id="screen-home">
+  <div class="topbar">
+    <div class="topbar-logo" onclick="navTo('home')" style="cursor:pointer">Trip<span>Budget</span></div>
+    <span id="homeSubtitle" style="font-size:12px;color:var(--text3)"></span>
+  </div>
+  <div class="scroll-area" id="homeContent"></div>
+</div>
+
+<!-- ══ SCREEN: PERSON VIEW ══ -->
+<div class="screen" id="screen-person">
+  <div class="pv-header">
+    <div class="pv-top">
+      <button class="pv-back" onclick="navTo('home')">‹</button>
+      <button class="pv-menu" onclick="openPersonMenu()" id="pvMenuBtn">⋯</button>
+    </div>
+    <div class="pv-avatar-row">
+      <div class="pv-avatar" id="pvAvatar"></div>
+      <div class="pv-info">
+        <div class="pv-name" id="pvName"></div>
+        <div class="pv-budget-line" id="pvBudgetLine"></div>
+      </div>
+    </div>
+  </div>
+  <div class="pv-summary" id="pvSummary"></div>
+  <div class="pv-progress"><div class="pv-progress-fill" id="pvProgressFill"></div></div>
+  <div class="pv-tabs">
+    <button class="pv-tab active" id="pvTabAdd" onclick="switchPVTab('add')">➕ Tilføj</button>
+    <button class="pv-tab" id="pvTabHistory" onclick="switchPVTab('history')">📋 Historik</button>
+  </div>
+  <div class="scroll-area" id="pvContent"></div>
+</div>
+
+<!-- ══ SCREEN: CALCULATOR ══ -->
+<div class="screen" id="screen-calc">
+  <div class="topbar">
+    <div class="topbar-logo" onclick="navTo('home')" style="cursor:pointer">Trip<span>Budget</span></div>
+    <span style="font-size:12px;color:var(--text3)">Omregner</span>
+  </div>
+  <div class="scroll-area">
+    <div class="card">
+      <div class="calc-display">
+        <div class="calc-amount" id="calcAmount">0</div>
+        <div class="calc-converted" id="calcConverted">= 0,00 DKK</div>
+        <div class="calc-rate-info" id="calcRateInfo"></div>
+      </div>
+      <div class="calc-currency-row">
+        <select class="calc-sel" id="calcFrom" onchange="calcUpdate()"></select>
+        <button class="calc-swap" onclick="calcSwap()">⇄</button>
+        <select class="calc-sel" id="calcTo" onchange="calcUpdate()"></select>
+      </div>
+      <div class="quick-amounts" id="quickAmounts"></div>
+      <div class="calc-keypad">
+        <button class="calc-key" onclick="calcKey('7')">7</button>
+        <button class="calc-key" onclick="calcKey('8')">8</button>
+        <button class="calc-key" onclick="calcKey('9')">9</button>
+        <button class="calc-key action" onclick="calcKey('C')">C</button>
+        <button class="calc-key" onclick="calcKey('4')">4</button>
+        <button class="calc-key" onclick="calcKey('5')">5</button>
+        <button class="calc-key" onclick="calcKey('6')">6</button>
+        <button class="calc-key action" onclick="calcKey('⌫')">⌫</button>
+        <button class="calc-key" onclick="calcKey('1')">1</button>
+        <button class="calc-key" onclick="calcKey('2')">2</button>
+        <button class="calc-key" onclick="calcKey('3')">3</button>
+        <button class="calc-key" onclick="calcKey('+')">+50</button>
+        <button class="calc-key wide" onclick="calcKey('0')">0</button>
+        <button class="calc-key" onclick="calcKey('.')">.</button>
+        <button class="calc-key" onclick="calcKey('-')">-10</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label" style="margin-bottom:12px">Alle kurser</div>
+      <div id="ratesTable"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN: SETTINGS ══ -->
+<div class="screen" id="screen-settings">
+  <div class="topbar">
+    <button onclick="cancelSettings()" style="background:none;border:none;color:var(--text2);font-size:14px;font-weight:500;cursor:pointer">Annuller</button>
+    <div class="topbar-title">Indstillinger</div>
+    <button onclick="saveSettings()" style="background:none;border:none;color:var(--red);font-size:14px;font-weight:600;cursor:pointer">Gem</button>
+  </div>
+  <div class="scroll-area" id="settingsContent"></div>
+</div>
+
+<!-- ══ BOTTOM NAV ══ -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-home" onclick="navTo('home')"><span class="ni">🏠</span><span class="nl">Hjem</span></button>
+  <button class="nav-btn" id="nav-calc" onclick="navTo('calc')"><span class="ni">🧮</span><span class="nl">Omregner</span></button>
+  <button class="nav-btn" id="nav-settings" onclick="navTo('settings')"><span class="ni">⚙️</span><span class="nl">Indstil</span></button>
+</nav>
+
+<!-- FAB for adding entries inside person view -->
+<button class="add-fab" id="addFab" onclick="switchPVTab('add')">＋</button>
+
+<!-- ══ MODALS ══ -->
+<div class="modal-overlay" id="personMenuModal"><div class="modal-box"><div id="personMenuContent"></div></div></div>
+<div class="modal-overlay" id="newPersonModal"><div class="modal-box"><div class="modal-title">Ny profil</div><div id="newPersonContent"></div></div></div>
+<div class="modal-overlay" id="editEntryModal"><div class="modal-box"><div class="modal-title">Rediger køb</div><div id="editEntryContent"></div></div></div>
+<div class="modal-overlay" id="confirmModal"><div class="modal-box"><div id="confirmContent"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════════
+const CURRENCIES={
+  DKK:{name:'Danske kroner',flag:'🇩🇰',rate:1},
+  EUR:{name:'Euro',flag:'🇪🇺',rate:7.46},
+  USD:{name:'Amerikanske dollars',flag:'🇺🇸',rate:6.44},
+  GBP:{name:'Britiske pund',flag:'🇬🇧',rate:8.65},
+  JPY:{name:'Japanske yen',flag:'🇯🇵',rate:0.0403},
+  CNY:{name:'Kinesiske yuan',flag:'🇨🇳',rate:0.943},
+};
+const CAT_COLORS=['#ff6b6b','#ffd166','#06d6a0','#4cc9f0','#c77dff','#f4a261','#e76f51','#52b69a','#b5179e','#74c69d'];
+const AVATAR_COLORS=['#ff6b6b','#ffd166','#06d6a0','#4cc9f0','#c77dff','#f4a261','#e76f51','#52b69a','#ff9f43','#a29bfe'];
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+const DEFAULTS={
+  apiKey:'',
+  persons:[
+    {id:'p1',name:'Rosa', color:'#ff6b6b',budget:1500,currency:'EUR',rate:7.46,homeCurrency:'DKK',categories:['Mad','Souvenirs','Aktivitet','Andet']},
+    {id:'p2',name:'Lily', color:'#4cc9f0',budget:1500,currency:'EUR',rate:7.46,homeCurrency:'DKK',categories:['Mad','Souvenirs','Aktivitet','Andet']},
+  ],
+  entries:[],
+  customRates:{}
+};
+function loadState(){try{const s=JSON.parse(localStorage.getItem('tb3_state'));if(!s)return DEFAULTS;if(!s.customRates)s.customRates={};s.persons.forEach(p=>{if(!p.color)p.color=AVATAR_COLORS[0]});return s}catch{return DEFAULTS}}
+function saveState(){localStorage.setItem('tb3_state',JSON.stringify(S))}
+let S=loadState();
+
+let currentScreen='home';
+let currentPersonId=null;
+let currentPVTab='add';
+let settingsDraft=null;
+let editingEntryId=null;
+let historyFilter='Alle';
+let uploadMode='cam';
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function navTo(name,personId){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  const navBtn=document.getElementById('nav-'+name);
+  if(navBtn)navBtn.classList.add('active');
+  currentScreen=name;
+  document.getElementById('addFab').classList.remove('visible');
+  if(name==='home')renderHome();
+  if(name==='person'){currentPersonId=personId||currentPersonId;renderPersonView();document.getElementById('addFab').classList.add('visible')}
+  if(name==='calc')renderCalc();
+  if(name==='settings')renderSettings();
+}
+
+// ══════════════════════════════════════════════
+// HOME — PROFILE SELECT
+// ══════════════════════════════════════════════
+function renderHome(){
+  const el=document.getElementById('homeContent');
+  if(!S.persons.length){
+    el.innerHTML=`<div style="text-align:center;padding:60px 24px">
+      <div style="font-size:56px;margin-bottom:16px">✈️</div>
+      <div style="font-size:20px;font-weight:700;margin-bottom:8px">Ingen profiler endnu</div>
+      <div style="font-size:14px;color:var(--text3);margin-bottom:28px">Opret en profil for at komme i gang</div>
+      <button class="btn-primary" style="max-width:240px;margin:0 auto" onclick="openNewPersonModal()">Opret profil</button>
+    </div>`;
+    document.getElementById('homeSubtitle').textContent='';
+    return;
+  }
+
+  // total remaining
+  let totalLeft=0,totalBudget=0,totalSpentHome=0;
+  S.persons.forEach(p=>{
+    const spent=S.entries.filter(e=>e.personId===p.id).reduce((a,e)=>a+e.price,0);
+    const sh=p.currency!==p.homeCurrency?spent*getRate(p.currency,p.homeCurrency):spent;
+    totalBudget+=p.budget;
+    totalSpentHome+=sh;
+    totalLeft+=p.budget-sh;
+  });
+  const totalPct=Math.min(100,(totalSpentHome/Math.max(totalBudget,1))*100);
+  const totalCol=totalPct<60?'#06d6a0':totalPct<85?'#ffd166':'#ff6b6b';
+  document.getElementById('homeSubtitle').textContent='';
+
+  // Hero banner
+  let html=`<div style="margin:12px 0 16px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:${totalCol};opacity:0.07;pointer-events:none"></div>
+    <div style="position:absolute;bottom:-30px;left:30px;width:80px;height:80px;border-radius:50%;background:var(--purple);opacity:0.05;pointer-events:none"></div>
+    <div style="font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Samlet tilbage</div>
+    <div style="font-size:38px;font-weight:700;letter-spacing:-2px;color:${totalCol};line-height:1;margin-bottom:4px">${totalLeft.toFixed(0)} <span style="font-size:18px;font-weight:500;opacity:.7">DKK</span></div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px">af ${totalBudget.toFixed(0)} DKK samlet budget</div>
+    <div style="height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
+      <div style="height:100%;width:${totalPct}%;background:linear-gradient(90deg,${totalCol},${totalCol}aa);border-radius:3px;transition:width .5s ease"></div>
+    </div>
+  </div>`;
+
+  // Overview list — profiles as clickable rows
+  html+=`<div style="background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+    <div style="padding:10px 14px 8px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Profiler</div>
+      <button onclick="openAllProfilesMenu()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:0 2px;letter-spacing:2px;line-height:1" title="Administrer alle profiler" onmouseenter="this.style.color='var(--text)'" onmouseleave="this.style.color='var(--text3)'">⋯</button>
+    </div>`;
+
+  S.persons.forEach(p=>{
+    const spent=S.entries.filter(e=>e.personId===p.id).reduce((a,e)=>a+e.price,0);
+    const spentHome=p.currency!==p.homeCurrency?spent*getRate(p.currency,p.homeCurrency):spent;
+    const remaining=p.budget-spentHome;
+    const pct=Math.min(100,(spentHome/p.budget)*100);
+    const col=pct<60?'#06d6a0':pct<85?'#ffd166':'#ff6b6b';
+    const initial=p.name.charAt(0).toUpperCase();
+    const travelStr=p.currency!==p.homeCurrency?` · ${spent.toFixed(0)} ${p.currency}`:'';
+    html+=`<div style="display:flex;align-items:center;border-top:1px solid var(--border)" ontouchstart="this.querySelector('.pr').style.background='var(--s2)'" ontouchend="this.querySelector('.pr').style.background=''">
+      <div class="pr" onclick="navTo('person','${p.id}')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;flex:1;min-width:0" onmouseenter="this.style.background='var(--s2)'" onmouseleave="this.style.background=''">
+        <div style="width:40px;height:40px;border-radius:50%;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0">${initial}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+            <span style="font-size:15px;font-weight:600">${esc(p.name)}</span>
+            <span style="font-size:14px;font-weight:700;color:${col}">${remaining.toFixed(0)} ${p.homeCurrency}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div style="flex:1;height:4px;background:var(--s3);border-radius:2px;overflow:hidden">
+              <div style="height:100%;width:${pct}%;background:${col};border-radius:2px"></div>
+            </div>
+            <span style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">brugt ${spentHome.toFixed(0)} ${p.homeCurrency}${travelStr}</span>
+          </div>
+        </div>
+        <div style="color:var(--text3);font-size:18px;flex-shrink:0;margin-left:4px">›</div>
+      </div>
+      <button onclick="openHomePersonMenu('${p.id}')" style="background:none;border:none;color:var(--text3);font-size:20px;padding:0 14px;cursor:pointer;letter-spacing:2px;flex-shrink:0;align-self:stretch;display:flex;align-items:center" onmouseenter="this.style.color='var(--text)'" onmouseleave="this.style.color='var(--text3)'">⋯</button>
+    </div>`;
+  });
+
+  // NY button at bottom of the list
+  html+=`<div onclick="openNewPersonModal()" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--border);cursor:pointer;" onmouseenter="this.style.background='var(--s2)'" onmouseleave="this.style.background=''" ontouchstart="this.style.background='var(--s2)'" ontouchend="this.style.background=''">
+    <div style="width:40px;height:40px;border-radius:50%;background:var(--s3);border:2px dashed var(--text3);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text3);flex-shrink:0">＋</div>
+    <span style="font-size:15px;font-weight:500;color:var(--text3)">Tilføj ny profil</span>
+  </div>`;
+
+  html+=`</div>`;
+  el.innerHTML=html;
+}
+
+// ══════════════════════════════════════════════
+// PERSON VIEW
+// ══════════════════════════════════════════════
+function renderPersonView(){
+  const p=S.persons.find(x=>x.id===currentPersonId);
+  if(!p)return navTo('home');
+  const initial=p.name.charAt(0).toUpperCase();
+
+  // Header
+  document.getElementById('pvAvatar').style.background=p.color;
+  document.getElementById('pvAvatar').textContent=initial;
+  document.getElementById('pvName').textContent=p.name;
+
+  const spent=S.entries.filter(e=>e.personId===p.id).reduce((a,e)=>a+e.price,0);
+  const spentHome=p.currency!==p.homeCurrency?spent*getRate(p.currency,p.homeCurrency):spent;
+  const remaining=p.budget-spentHome;
+  const pct=Math.min(100,(spentHome/p.budget)*100);
+  const col=pct<60?'#06d6a0':pct<85?'#ffd166':'#ff6b6b';
+
+  document.getElementById('pvBudgetLine').textContent=`Budget: ${p.budget} ${p.homeCurrency} · ${CURRENCIES[p.currency]?.flag||''} ${p.currency}`;
+  document.getElementById('pvSummary').innerHTML=`
+    <div class="pv-stat"><div class="pv-stat-val" style="color:${col}">${remaining.toFixed(0)}</div><div class="pv-stat-lbl">Tilbage (${p.homeCurrency})</div></div>
+    <div class="pv-stat"><div class="pv-stat-val">${spentHome.toFixed(0)}</div><div class="pv-stat-lbl">Brugt (${p.homeCurrency})</div></div>
+    ${p.currency!==p.homeCurrency?`<div class="pv-stat"><div class="pv-stat-val" style="color:var(--yellow)">${spent.toFixed(2)}</div><div class="pv-stat-lbl">Brugt (${p.currency})</div></div>`:''}
+    <div class="pv-stat"><div class="pv-stat-val">${S.entries.filter(e=>e.personId===p.id).length}</div><div class="pv-stat-lbl">Køb</div></div>
+  `;
+  document.getElementById('pvProgressFill').style.cssText=`width:${pct}%;background:${col}`;
+
+  // Tabs
+  document.getElementById('pvTabAdd').classList.toggle('active',currentPVTab==='add');
+  document.getElementById('pvTabHistory').classList.toggle('active',currentPVTab==='history');
+
+  if(currentPVTab==='add')renderAddTab(p);
+  else renderHistoryTab(p);
+}
+
+function switchPVTab(tab){
+  currentPVTab=tab;
+  if(currentScreen==='person')renderPersonView();
+  else navTo('person');
+}
+
+// ══════════════════════════════════════════════
+// ADD TAB
+// ══════════════════════════════════════════════
+function renderAddTab(p){
+  const catOptions=p.categories.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('pvContent').innerHTML=`
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">
+      <div class="upload-tabs">
+        <button class="upload-tab active" id="tabCam" onclick="switchUploadTab('cam')">📷 Kamera</button>
+        <button class="upload-tab" id="tabGallery" onclick="switchUploadTab('gallery')">🖼 Galleri</button>
+        <div id="onlineIndicator" style="display:flex;align-items:center;gap:5px;padding:0 12px;margin-left:auto;flex-shrink:0">
+          <div id="onlineDot" style="width:8px;height:8px;border-radius:50%;background:#06d6a0;box-shadow:0 0 6px #06d6a0;flex-shrink:0;transition:all .3s"></div>
+          <span id="onlineLabel" style="font-size:11px;color:var(--text3);white-space:nowrap">Online</span>
+        </div>
+      </div>
+      <div class="upload-body">
+        <img id="previewImg" class="preview-img">
+        <div class="ai-processing" id="aiProcessing"><span class="spin">⟳</span>Analyserer…</div>
+        <div class="ai-suggestion" id="aiSuggestion"><div class="ai-tag">✦ AI foreslår</div><div id="aiSuggContent"></div></div>
+        <label class="upload-trigger" id="uploadTrigger" for="camInput">
+          <span class="ui">📷</span><span class="ut">Tag billede af prisskiltet</span><span class="us">AI aflæser pris og navn automatisk</span>
+        </label>
+        <input type="file" id="camInput" accept="image/*" capture="environment">
+        <input type="file" id="galleryInput" accept="image/*">
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label" style="margin-bottom:12px">Detaljer</div>
+      <div class="field-wrap">
+        <label class="field-label">Hvad er det?</label>
+        <input class="field-input" id="entryName" placeholder="f.eks. Is, Souvenir, Museum…">
+      </div>
+      <div class="two-col" style="margin-bottom:14px">
+        <div>
+          <label class="field-label">Pris (${esc(p.currency)})</label>
+          <input class="field-input" id="entryPrice" type="number" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div>
+          <label class="field-label">Dato</label>
+          <input class="field-input" id="entryDate" type="date" value="${today}">
+        </div>
+      </div>
+      <div class="field-wrap">
+        <label class="field-label">Kategori</label>
+        <select class="field-select" id="entryCat">${catOptions}</select>
+      </div>
+      <button class="btn-primary" onclick="submitEntry()">Tilføj køb ➜</button>
+    </div>`;
+
+  // Re-attach file listeners
+  document.getElementById('camInput').addEventListener('change',function(e){handleImageFile(e.target.files[0]);this.value=''});
+  document.getElementById('galleryInput').addEventListener('change',function(e){handleImageFile(e.target.files[0]);this.value=''});
+  updateOnlineStatus();
+}
+
+function submitEntry(){
+  const name=document.getElementById('entryName')?.value.trim();
+  const price=parseFloat(document.getElementById('entryPrice')?.value);
+  const cat=document.getElementById('entryCat')?.value;
+  const dateVal=document.getElementById('entryDate')?.value;
+  if(!name){toast('Skriv hvad du har købt 😊');return}
+  if(!price||price<=0){toast('Indtast en gyldig pris');return}
+  const ts=dateVal?new Date(dateVal).getTime():Date.now();
+  S.entries.push({id:'e'+Date.now(),personId:currentPersonId,name,price,category:cat,ts});
+  saveState();
+  document.getElementById('entryName').value='';
+  document.getElementById('entryPrice').value='';
+  document.getElementById('previewImg').style.display='none';
+  document.getElementById('aiSuggestion').style.display='none';
+  document.getElementById('uploadTrigger').style.display='flex';
+  renderPersonView();
+  toast('Tilføjet! ✓');
+}
+
+// ══════════════════════════════════════════════
+// HISTORY TAB
+// ══════════════════════════════════════════════
+function renderHistoryTab(p){
+  const entries=S.entries.filter(e=>e.personId===p.id);
+  const sorted=[...entries].sort((a,b)=>b.ts-a.ts);
+  const cats=['Alle',...p.categories];
+
+  const filterHtml=`<div class="filter-row">${cats.map(c=>`
+    <div class="filter-chip ${historyFilter===c?'active':''}" onclick="setHistoryFilter('${esc(c)}')">${esc(c)}</div>
+  `).join('')}</div>`;
+
+  const filtered=historyFilter==='Alle'?sorted:sorted.filter(e=>e.category===historyFilter);
+
+  if(!filtered.length){
+    document.getElementById('pvContent').innerHTML=filterHtml+`<div class="empty"><div class="ei">🛍️</div><p>${historyFilter==='Alle'?'Ingen køb endnu':'Ingen køb i denne kategori'}</p></div>`;
+    return;
+  }
+
+  const entriesHtml=filtered.map(e=>{
+    const priceHome=p.currency!==p.homeCurrency?(e.price*getRate(p.currency,p.homeCurrency)).toFixed(0):null;
+    const catIdx=p.categories.indexOf(e.category);
+    const col=CAT_COLORS[catIdx>=0?catIdx%CAT_COLORS.length:0];
+    const date=new Date(e.ts).toLocaleDateString('da-DK',{day:'numeric',month:'short'});
+    return `<div class="entry-item">
+      <div class="entry-dot" style="background:${col}"></div>
+      <div class="entry-info">
+        <div class="entry-name">${esc(e.name)}</div>
+        <div class="entry-meta">${esc(e.category)} · ${date}</div>
+      </div>
+      <div class="entry-prices">
+        <div class="entry-price-main">${e.price.toFixed(2)} ${esc(p.currency)}</div>
+        ${priceHome?`<div class="entry-price-sub">≈ ${priceHome} ${esc(p.homeCurrency)}</div>`:''}
+      </div>
+      <div class="entry-actions">
+        <button class="entry-btn edit" onclick="openEditEntry('${e.id}')">✏️</button>
+        <button class="entry-btn del" onclick="deleteEntry('${e.id}')">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('pvContent').innerHTML=filterHtml+entriesHtml;
+}
+
+function setHistoryFilter(cat){historyFilter=cat;renderPersonView()}
+function deleteEntry(id){S.entries=S.entries.filter(e=>e.id!==id);saveState();renderPersonView();toast('Slettet')}
+function openEditEntry(id){
+  const e=S.entries.find(x=>x.id===id);
+  if(!e)return;
+  editingEntryId=id;
+  const p=S.persons.find(x=>x.id===e.personId);
+  const catOptions=p.categories.map(c=>`<option value="${esc(c)}" ${c===e.category?'selected':''}>${esc(c)}</option>`).join('');
+  const dateVal=new Date(e.ts).toISOString().split('T')[0];
+  document.getElementById('editEntryContent').innerHTML=`
+    <div class="field-wrap"><label class="field-label">Navn</label>
+      <input class="field-input" id="eeN" value="${esc(e.name)}"></div>
+    <div class="two-col" style="margin-bottom:14px">
+      <div><label class="field-label">Pris (${esc(p.currency)})</label>
+        <input class="field-input" id="eeP" type="number" value="${e.price}" step="0.01"></div>
+      <div><label class="field-label">Dato</label>
+        <input class="field-input" id="eeD" type="date" value="${dateVal}"></div>
+    </div>
+    <div class="field-wrap"><label class="field-label">Kategori</label>
+      <select class="field-select" id="eeC">${catOptions}</select></div>
+    <button class="btn-primary" onclick="saveEditEntry()">Gem ændringer ✓</button>
+    <button class="btn-secondary" onclick="closeModal('editEntryModal')">Annuller</button>`;
+  openModal('editEntryModal');
+}
+function saveEditEntry(){
+  const e=S.entries.find(x=>x.id===editingEntryId);
+  if(!e)return;
+  e.name=document.getElementById('eeN').value.trim()||e.name;
+  e.price=parseFloat(document.getElementById('eeP').value)||e.price;
+  e.category=document.getElementById('eeC').value;
+  const dv=document.getElementById('eeD').value;
+  if(dv)e.ts=new Date(dv).getTime();
+  saveState();closeModal('editEntryModal');renderPersonView();toast('Opdateret ✓');
+}
+
+// ══════════════════════════════════════════════
+// PERSON MENU (⋯)
+// ══════════════════════════════════════════════
+function openPersonMenu(){
+  const p=S.persons.find(x=>x.id===currentPersonId);
+  if(!p)return;
+  const spent=S.entries.filter(e=>e.personId===p.id).reduce((a,e)=>a+e.price,0);
+  const spentHome=p.currency!==p.homeCurrency?spent*getRate(p.currency,p.homeCurrency):spent;
+  document.getElementById('personMenuContent').innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+      <div style="width:44px;height:44px;border-radius:50%;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:white;flex-shrink:0">${p.name.charAt(0).toUpperCase()}</div>
+      <div><div style="font-size:16px;font-weight:600">${esc(p.name)}</div><div style="font-size:12px;color:var(--text3)">Budget: ${p.budget} ${p.homeCurrency}</div></div>
+    </div>
+    <div class="action-item" onclick="closeModal('personMenuModal');openPersonSettings(currentPersonId)">
+      <div class="action-icon" style="background:var(--s3)">⚙️</div>
+      <div class="action-info"><div class="action-title">Rediger profil</div><div class="action-sub">Skift navn, budget, valuta og kategorier</div></div>
+    </div>
+    <div class="action-item" onclick="closeModal('personMenuModal');exportPersonPDF(currentPersonId)">
+      <div class="action-icon" style="background:rgba(76,201,240,.15)">📄</div>
+      <div class="action-info"><div class="action-title">Gem som PDF</div><div class="action-sub">Eksporter ferieregnskab til PDF</div></div>
+    </div>
+    <div class="action-item" onclick="closeModal('personMenuModal');resetPersonEntries('${p.id}')">
+      <div class="action-icon" style="background:rgba(255,209,102,.15)">🔄</div>
+      <div class="action-info"><div class="action-title">Nulstil budget</div><div class="action-sub">Slet alle ${S.entries.filter(e=>e.personId===p.id).length} køb, behold profil</div></div>
+    </div>
+    <div class="action-item" onclick="closeModal('personMenuModal');deletePerson('${p.id}')">
+      <div class="action-icon" style="background:rgba(255,107,107,.15)">🗑️</div>
+      <div class="action-info"><div class="action-title" style="color:var(--red)">Slet profil</div><div class="action-sub">Fjerner profil og alle køb permanent</div></div>
+    </div>
+    <button class="btn-secondary" onclick="closeModal('personMenuModal')" style="margin-top:8px">Luk</button>`;
+  openModal('personMenuModal');
+}
+
+function resetPersonEntries(id){
+  const p=S.persons.find(x=>x.id===id);
+  if(!p)return;
+  showConfirm({
+    icon:'🔄',
+    title:`Nulstil ${p.name}?`,
+    sub:`Sletter alle ${S.entries.filter(e=>e.personId===id).length} køb — profilen beholdes`,
+    confirmLabel:'Ja, nulstil',
+    onConfirm:()=>{
+      S.entries=S.entries.filter(e=>e.personId!==id);
+      saveState();
+      closeModal('personMenuModal');
+      if(currentScreen==='person')renderPersonView();
+      else renderHome();
+      toast('Budget nulstillet ✓');
+    }
+  });
+}
+
+// ══════════════════════════════════════════════
+// CONFIRM DIALOG (replaces browser confirm())
+// ══════════════════════════════════════════════
+function showConfirm({icon,title,sub,confirmLabel,confirmStyle,onConfirm}){
+  // Store callback
+  window._confirmCb=onConfirm;
+  document.getElementById('confirmContent').innerHTML=`
+    <div style="text-align:center;padding:8px 0 20px">
+      <div style="font-size:40px;margin-bottom:14px">${icon}</div>
+      <div style="font-size:17px;font-weight:600;margin-bottom:8px">${title}</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:24px">${sub}</div>
+      <button class="btn-primary" style="margin-bottom:8px;${confirmStyle||''}" onclick="window._confirmCb&&window._confirmCb();closeModal('confirmModal')">${confirmLabel}</button>
+      <button class="btn-secondary" onclick="closeModal('confirmModal')">Annuller</button>
+    </div>`;
+  openModal('confirmModal');
+}
+function deletePerson(id){
+  const p=S.persons.find(x=>x.id===id);
+  if(!p)return;
+  showConfirm({
+    icon:'🗑️',
+    title:`Slet ${p.name}?`,
+    sub:'Profil og alle køb slettes permanent',
+    confirmLabel:'Ja, slet',
+    confirmStyle:'background:var(--red)',
+    onConfirm:()=>{
+      S.entries=S.entries.filter(e=>e.personId!==id);
+      S.persons=S.persons.filter(x=>x.id!==id);
+      saveState();navTo('home');toast('Profil slettet');
+    }
+  });
+}
+
+// ══════════════════════════════════════════════
+// HOME PERSON MENU (⋯ from frontpage)
+// ══════════════════════════════════════════════
+function openHomePersonMenu(id){
+  const p=S.persons.find(x=>x.id===id);
+  if(!p)return;
+  const entryCount=S.entries.filter(e=>e.personId===id).length;
+  const spent=S.entries.filter(e=>e.personId===id).reduce((a,e)=>a+e.price,0);
+  const spentHome=p.currency!==p.homeCurrency?spent*getRate(p.currency,p.homeCurrency):spent;
+  const remaining=(p.budget-spentHome).toFixed(0);
+  document.getElementById('personMenuContent').innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+      <div style="width:44px;height:44px;border-radius:50%;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:white;flex-shrink:0">${p.name.charAt(0).toUpperCase()}</div>
+      <div><div style="font-size:16px;font-weight:600">${esc(p.name)}</div><div style="font-size:12px;color:var(--text3)">${remaining} ${p.homeCurrency} tilbage · ${entryCount} køb</div></div>
+    </div>
+    <div class="action-item" onclick="closeModal('personMenuModal');openPersonSettings('${id}')">
+      <div class="action-icon" style="background:var(--s3)">⚙️</div>
+      <div class="action-info"><div class="action-title">Rediger profil</div><div class="action-sub">Skift navn, budget, valuta og kategorier</div></div>
+    </div>
+    <div class="action-item" onclick="closeModal('personMenuModal');exportPersonPDF('${id}')">
+      <div class="action-icon" style="background:rgba(76,201,240,.15)">📄</div>
+      <div class="action-info"><div class="action-title">Gem som PDF</div><div class="action-sub">Eksporter ferieregnskab inden sletning</div></div>
+    </div>
+    <div class="action-item" onclick="closeModal('personMenuModal');resetPersonEntries('${id}')">
+      <div class="action-icon" style="background:rgba(255,209,102,.15)">🔄</div>
+      <div class="action-info"><div class="action-title">Nulstil budget</div><div class="action-sub">Slet alle ${entryCount} køb, behold profil</div></div>
+    </div>
+    <div class="action-item" onclick="closeModal('personMenuModal');deletePerson('${id}')">
+      <div class="action-icon" style="background:rgba(255,107,107,.15)">🗑️</div>
+      <div class="action-info"><div class="action-title" style="color:var(--red)">Slet profil</div><div class="action-sub">Fjerner profil og alle køb permanent</div></div>
+    </div>
+    <button class="btn-secondary" onclick="closeModal('personMenuModal')" style="margin-top:8px">Luk</button>`;
+  openModal('personMenuModal');
+}
+
+// ══════════════════════════════════════════════
+// ALL PROFILES MENU (⋯ on Profiler header)
+// ══════════════════════════════════════════════
+function openAllProfilesMenu(){
+  if(!S.persons.length){toast('Ingen profiler endnu');return}
+
+  const personSections=S.persons.map(p=>{
+    const entryCount=S.entries.filter(e=>e.personId===p.id).length;
+    const spent=S.entries.filter(e=>e.personId===p.id).reduce((a,e)=>a+e.price,0);
+    const spentHome=p.currency!==p.homeCurrency?spent*getRate(p.currency,p.homeCurrency):spent;
+    const remaining=(p.budget-spentHome).toFixed(0);
+    const col=parseFloat(remaining)>=0?'var(--green)':'var(--red)';
+    return `
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:10px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border)">
+        <div style="width:38px;height:38px;border-radius:50%;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0">${p.name.charAt(0).toUpperCase()}</div>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:600">${esc(p.name)}</div>
+          <div style="font-size:12px;color:var(--text3)"><span style="color:${col};font-weight:600">${remaining} ${p.homeCurrency} tilbage</span> · ${entryCount} køb</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)">
+        <button onclick="closeModal('personMenuModal');openPersonSettings('${p.id}')" style="background:var(--s1);border:none;color:var(--text2);font-size:13px;padding:11px 8px;cursor:pointer;font-family:'Outfit',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px" onmouseenter="this.style.background='var(--s2)'" onmouseleave="this.style.background='var(--s1)'">⚙️ Rediger</button>
+        <button onclick="closeModal('personMenuModal');exportPersonPDF('${p.id}')" style="background:var(--s1);border:none;color:var(--text2);font-size:13px;padding:11px 8px;cursor:pointer;font-family:'Outfit',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px" onmouseenter="this.style.background='var(--s2)'" onmouseleave="this.style.background='var(--s1)'">📄 PDF</button>
+        <button onclick="closeModal('personMenuModal');resetPersonEntries('${p.id}')" style="background:var(--s1);border:none;color:var(--text2);font-size:13px;padding:11px 8px;cursor:pointer;font-family:'Outfit',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px" onmouseenter="this.style.background='var(--s2)'" onmouseleave="this.style.background='var(--s1)'">🔄 Nulstil</button>
+        <button onclick="closeModal('personMenuModal');deletePerson('${p.id}')" style="background:var(--s1);border:none;color:var(--red);font-size:13px;padding:11px 8px;cursor:pointer;font-family:'Outfit',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px" onmouseenter="this.style.background='var(--s2)'" onmouseleave="this.style.background='var(--s1)'">🗑️ Slet</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('personMenuContent').innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+      <div style="font-size:17px;font-weight:600">Alle profiler</div>
+      <button onclick="closeModal('personMenuModal');exportAllPDF()" style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 12px;color:var(--blue);font-size:13px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif">📄 Eksporter alle</button>
+    </div>
+    ${personSections}
+    <button class="btn-secondary" onclick="closeModal('personMenuModal')" style="margin-top:4px">Luk</button>`;
+  openModal('personMenuModal');
+}
+
+
+function buildPDFStyles(){
+  return `
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#111;padding:0}
+    .save-bar{position:fixed;top:0;left:0;right:0;background:#0a0a14;border-bottom:1px solid #222;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;z-index:100;gap:12px}
+    .save-bar-left{color:#f0f0fa;font-size:14px;font-weight:600}
+    .save-bar-sub{color:#8888aa;font-size:11px;margin-top:1px}
+    .save-btn{background:#ff6b6b;color:white;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+    .save-btn:hover{opacity:.88}
+    .page{max-width:680px;margin:0 auto;padding:52px 20px 24px}
+    .doc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid #f0f0f4}
+    .doc-logo{font-size:17px;font-weight:800;color:#0a0a14;letter-spacing:-0.3px}
+    .doc-logo span{color:#ff6b6b}
+    .doc-meta{font-size:11px;color:#aaa;text-align:right}
+    .person-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0}
+    .person-name{font-size:16px;font-weight:700;color:#0a0a14}
+    .person-meta{font-size:11px;color:#aaa;margin-top:1px}
+    .stats-row{display:flex;gap:6px;margin-bottom:10px}
+    .stat{flex:1;background:#f7f7fa;border-radius:8px;padding:8px 10px;text-align:center}
+    .stat-val{font-size:14px;font-weight:700;color:#111}
+    .stat-lbl{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+    .bar-wrap{height:4px;background:#ebebf0;border-radius:2px;overflow:hidden;margin-bottom:12px}
+    .bar-fill{height:100%;border-radius:2px}
+    table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:0}
+    thead th{background:#f7f7fa;padding:6px 8px;font-size:10px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.4px;text-align:left;border-bottom:1px solid #eee}
+    tbody tr:hover{background:#fafafa}
+    tbody td{padding:6px 8px;color:#333;border-bottom:1px solid #f3f3f3}
+    tfoot td{padding:7px 8px;font-weight:700;font-size:12px;background:#f7f7fa;border-top:2px solid #eee}
+    .amt{font-weight:600;color:#111;text-align:right;white-space:nowrap}
+    .amt-home{color:#06a882;text-align:right;white-space:nowrap;font-size:11px}
+    .section-divider{border:none;border-top:2px solid #f0f0f4;margin:16px 0}
+    .footer{text-align:center;color:#ccc;font-size:10px;margin-top:20px;padding-top:12px;border-top:1px solid #f0f0f0}
+    .summary-section{margin-bottom:20px}
+    .total-row{display:flex;justify-content:space-between;align-items:center;background:#0a0a14;border-radius:8px;padding:10px 14px;margin-bottom:14px;color:white}
+    .total-left{font-size:12px;color:#8888aa}
+    .total-val{font-size:18px;font-weight:700;letter-spacing:-0.5px}
+    .overview-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f3f3f3}
+    .ov-bar{flex:1;height:4px;background:#ebebf0;border-radius:2px;overflow:hidden;margin:0 8px}
+    .ov-fill{height:100%;border-radius:2px}
+    @media print{
+      .save-bar{display:none!important}
+      .page{padding-top:20px;padding-left:0;padding-right:0;max-width:100%}
+      @page{margin:12mm 14mm;size:A4}
+      body{background:white}
+      .bar-wrap{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .bar-fill{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .stat{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .avatar{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .total-row{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .overview-row .ov-fill{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      tfoot td{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    }`;
+}
+
+function buildPersonHTML(p, includePageBreak){
+  const entries=[...S.entries.filter(e=>e.personId===p.id)].sort((a,b)=>a.ts-b.ts);
+  const spent=entries.reduce((a,e)=>a+e.price,0);
+  const spentHome=p.currency!==p.homeCurrency?spent*getRate(p.currency,p.homeCurrency):spent;
+  const remaining=p.budget-spentHome;
+  const pct=Math.min(100,(spentHome/p.budget)*100);
+  const col=pct<60?'#06d6a0':pct<85?'#f59e0b':'#ef4444';
+  const initial=p.name.charAt(0).toUpperCase();
+  const extraTh=p.currency!==p.homeCurrency?`<th class="amt-home">≈ ${p.homeCurrency}</th>`:'';
+  const pb=includePageBreak?'page-break-before:always;padding-top:8px;':'';
+
+  const rows=entries.map(e=>{
+    const priceHome=p.currency!==p.homeCurrency?`<td class="amt-home">≈${(e.price*getRate(p.currency,p.homeCurrency)).toFixed(0)}</td>`:'';
+    const date=new Date(e.ts).toLocaleDateString('da-DK',{day:'numeric',month:'short'});
+    return `<tr><td style="color:#aaa;white-space:nowrap">${date}</td><td>${e.name}</td><td style="color:#aaa">${e.category}</td><td class="amt">${e.price.toFixed(2)}</td>${priceHome}</tr>`;
+  }).join('');
+
+  const travelStat=p.currency!==p.homeCurrency
+    ?`<div class="stat"><div class="stat-val" style="color:#f59e0b">${spent.toFixed(2)} ${p.currency}</div><div class="stat-lbl">Brugt ${p.currency}</div></div>`:'';
+
+  return `<div style="${pb}">
+    <div class="person-header">
+      <div class="avatar" style="background:${p.color}">${initial}</div>
+      <div><div class="person-name">${p.name}</div><div class="person-meta">${CURRENCIES[p.currency]?.flag||''} ${p.currency}→${p.homeCurrency} · kurs ${p.rate}</div></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-val">${p.budget}</div><div class="stat-lbl">Budget ${p.homeCurrency}</div></div>
+      <div class="stat"><div class="stat-val">${spentHome.toFixed(0)}</div><div class="stat-lbl">Brugt ${p.homeCurrency}</div></div>
+      ${travelStat}
+      <div class="stat"><div class="stat-val" style="color:${col}">${remaining.toFixed(0)}</div><div class="stat-lbl">Tilbage ${p.homeCurrency}</div></div>
+    </div>
+    <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>
+    ${!entries.length
+      ? `<p style="color:#ccc;font-size:12px;padding:8px 0">Ingen køb registreret.</p>`
+      : `<table>
+          <thead><tr><th>Dato</th><th>Hvad</th><th>Kategori</th><th class="amt">${p.currency}</th>${extraTh}</tr></thead>
+          <tbody>${rows}</tbody>
+          <tfoot><tr>
+            <td colspan="3">Total</td>
+            <td class="amt">${spent.toFixed(2)} ${p.currency}</td>
+            ${p.currency!==p.homeCurrency?`<td class="amt-home">≈${spentHome.toFixed(0)} ${p.homeCurrency}</td>`:''}
+          </tr></tfoot>
+        </table>`}
+  </div>`;
+}
+
+function exportPersonPDF(id){
+  const p=S.persons.find(x=>x.id===id);
+  if(!p)return;
+  const now=new Date().toLocaleDateString('da-DK',{day:'numeric',month:'long',year:'numeric'});
+  const spent=S.entries.filter(e=>e.personId===id).reduce((a,e)=>a+e.price,0);
+  const spentHome=p.currency!==p.homeCurrency?spent*getRate(p.currency,p.homeCurrency):spent;
+  const remaining=p.budget-spentHome;
+  const pct=Math.min(100,(spentHome/p.budget)*100);
+  const col=pct<60?'#06d6a0':pct<85?'#f59e0b':'#ef4444';
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>TripBudget — ${p.name}</title>
+  <style>${buildPDFStyles()}</style></head><body>
+  <div class="save-bar">
+    <div><div class="save-bar-left">✈️ ${p.name}s ferieregnskab</div><div class="save-bar-sub">Tryk Gem for at downloade som PDF</div></div>
+    <button class="save-btn" onclick="window.print()">💾 Gem som PDF</button>
+  </div>
+  <div class="page">
+    <div class="doc-top">
+      <div class="doc-logo">Trip<span>Budget</span></div>
+      <div class="doc-meta">Ferieregnskab for ${p.name}<br>${now}</div>
+    </div>
+    ${buildPersonHTML(p, false)}
+    <div class="footer">Genereret med TripBudget · ${now}</div>
+  </div>
+  </body></html>`;
+
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();toast('📄 Åbnet — tryk "Gem som PDF" knappen')}
+  else toast('Tillad popups for at eksportere PDF');
+}
+
+function exportAllPDF(){
+  if(!S.persons.length){toast('Ingen profiler at eksportere');return}
+  const now=new Date().toLocaleDateString('da-DK',{day:'numeric',month:'long',year:'numeric'});
+  let totalBudget=0,totalSpentHome=0;
+  S.persons.forEach(p=>{
+    const spent=S.entries.filter(e=>e.personId===p.id).reduce((a,e)=>a+e.price,0);
+    totalBudget+=p.budget;
+    totalSpentHome+=p.currency!==p.homeCurrency?spent*getRate(p.currency,p.homeCurrency):spent;
+  });
+  const totalRemaining=totalBudget-totalSpentHome;
+  const homeCur=S.persons[0]?.homeCurrency||'DKK';
+  const totalCol=totalRemaining>=0?'#06d6a0':'#ef4444';
+  const totalPct=Math.min(100,(totalSpentHome/Math.max(totalBudget,1))*100);
+  const totalBarCol=totalPct<60?'#06d6a0':totalPct<85?'#f59e0b':'#ef4444';
+
+  const overviewRows=S.persons.map(p=>{
+    const spent=S.entries.filter(e=>e.personId===p.id).reduce((a,e)=>a+e.price,0);
+    const sh=p.currency!==p.homeCurrency?spent*getRate(p.currency,p.homeCurrency):spent;
+    const rem=p.budget-sh;
+    const pct=Math.min(100,(sh/p.budget)*100);
+    const c=rem>=0?'#06d6a0':'#ef4444';
+    const initial=p.name.charAt(0).toUpperCase();
+    return `<div class="overview-row">
+      <div style="width:28px;height:28px;border-radius:50%;background:${p.color};color:white;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initial}</div>
+      <div style="font-size:13px;font-weight:600;min-width:60px">${p.name}</div>
+      <div class="ov-bar"><div class="ov-fill" style="width:${pct}%;background:${c}"></div></div>
+      <div style="font-size:12px;color:#aaa;white-space:nowrap">${sh.toFixed(0)} / ${p.budget} ${p.homeCurrency}</div>
+      <div style="font-size:13px;font-weight:700;color:${c};min-width:80px;text-align:right">${rem.toFixed(0)} tilbage</div>
+    </div>`;
+  }).join('');
+
+  const personSections=S.persons.map((p,i)=>buildPersonHTML(p, i>0)).join('<hr class="section-divider">');
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>TripBudget — Samlet ferieregnskab</title>
+  <style>${buildPDFStyles()}</style></head><body>
+  <div class="save-bar">
+    <div><div class="save-bar-left">✈️ Samlet ferieregnskab · ${S.persons.length} profiler</div><div class="save-bar-sub">Tryk Gem for at downloade som PDF</div></div>
+    <button class="save-btn" onclick="window.print()">💾 Gem som PDF</button>
+  </div>
+  <div class="page">
+    <div class="doc-top">
+      <div class="doc-logo">Trip<span>Budget</span></div>
+      <div class="doc-meta">Samlet ferieregnskab · ${S.persons.length} profiler<br>${now}</div>
+    </div>
+
+    <div class="total-row">
+      <div><div class="total-left">Samlet tilbage</div><div class="total-val" style="color:${totalCol}">${totalRemaining.toFixed(0)} ${homeCur}</div></div>
+      <div style="text-align:right"><div class="total-left">Brugt / Budget</div><div style="font-size:14px;font-weight:600">${totalSpentHome.toFixed(0)} / ${totalBudget.toFixed(0)} ${homeCur}</div></div>
+    </div>
+    <div class="bar-wrap" style="margin-bottom:16px"><div class="bar-fill" style="width:${totalPct}%;background:${totalBarCol}"></div></div>
+
+    <div class="summary-section">${overviewRows}</div>
+    <hr class="section-divider">
+    ${personSections}
+    <div class="footer">Genereret med TripBudget · ${now}</div>
+  </div>
+  </body></html>`;
+
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();toast('📄 Åbnet — tryk "Gem som PDF" knappen')}
+  else toast('Tillad popups for at eksportere PDF');
+}
+
+
+// ══════════════════════════════════════════════
+// NEW PERSON MODAL
+// ══════════════════════════════════════════════
+function openNewPersonModal(){
+  const curOptions=Object.entries(CURRENCIES).map(([code,info])=>`<option value="${code}" ${code==='EUR'?'selected':''}>${info.flag} ${code}</option>`).join('');
+  const homeCurOptions=Object.entries(CURRENCIES).map(([code,info])=>`<option value="${code}" ${code==='DKK'?'selected':''}>${info.flag} ${code}</option>`).join('');
+  const swatches=AVATAR_COLORS.map((c,i)=>`<div class="swatch ${i===0?'selected':''}" style="background:${c}" onclick="selectSwatch(this,'${c}')"></div>`).join('');
+  document.getElementById('newPersonContent').innerHTML=`
+    <div class="field-wrap"><label class="field-label">Navn</label>
+      <input class="field-input" id="npName" placeholder="f.eks. Peter" oninput="updateNPPreview()"></div>
+    <div class="field-wrap">
+      <label class="field-label">Avatar farve</label>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+        <div id="npAvatarPreview" style="width:52px;height:52px;border-radius:50%;background:${AVATAR_COLORS[0]};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:white">?</div>
+        <div class="color-swatches">${swatches}</div>
+      </div>
+    </div>
+    <div class="two-col" style="margin-bottom:14px">
+      <div><label class="field-label">Budget</label>
+        <input class="field-input" id="npBudget" type="number" value="1500" placeholder="1500"></div>
+      <div><label class="field-label">Hjemvaluta</label>
+        <select class="field-select" id="npHomeCur">${homeCurOptions}</select></div>
+    </div>
+    <div class="two-col" style="margin-bottom:14px">
+      <div><label class="field-label">Rejsevaluta</label>
+        <select class="field-select" id="npCur" onchange="npUpdateRate()">${curOptions}</select></div>
+      <div><label class="field-label">Kurs</label>
+        <input class="field-input" id="npRate" type="number" step="0.01" value="7.46"></div>
+    </div>
+    <button class="btn-primary" onclick="createPerson()">Opret profil ➜</button>
+    <button class="btn-secondary" onclick="closeModal('newPersonModal')">Annuller</button>`;
+  openModal('newPersonModal');
+}
+
+let npColor=AVATAR_COLORS[0];
+function npUpdateRate(){
+  const cur=document.getElementById('npCur')?.value||'EUR';
+  const homeCur=document.getElementById('npHomeCur')?.value||'DKK';
+  const rate=getAutoRate(cur,homeCur);
+  const rateInp=document.getElementById('npRate');
+  if(rateInp)rateInp.value=rate;
+}
+function selectSwatch(el,color){
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  npColor=color;
+  const prev=document.getElementById('npAvatarPreview');
+  if(prev)prev.style.background=color;
+}
+function updateNPPreview(){
+  const v=document.getElementById('npName')?.value||'';
+  const prev=document.getElementById('npAvatarPreview');
+  if(prev)prev.textContent=v?v.charAt(0).toUpperCase():'?';
+}
+function createPerson(){
+  const name=document.getElementById('npName')?.value.trim();
+  if(!name){toast('Skriv et navn');return}
+  const budget=parseFloat(document.getElementById('npBudget')?.value)||1000;
+  const currency=document.getElementById('npCur')?.value||'EUR';
+  const homeCurrency=document.getElementById('npHomeCur')?.value||'DKK';
+  const rate=parseFloat(document.getElementById('npRate')?.value)||7.46;
+  S.persons.push({id:'p'+Date.now(),name,color:npColor,budget,currency,rate,homeCurrency,categories:['Mad','Souvenirs','Aktivitet','Andet']});
+  saveState();closeModal('newPersonModal');renderHome();toast(`${name} oprettet! ✓`);
+}
+
+// ══════════════════════════════════════════════
+// IMAGE / AI
+// ══════════════════════════════════════════════
+function switchUploadTab(mode){
+  uploadMode=mode;
+  const isCam=mode==='cam';
+  document.getElementById('tabCam')?.classList.toggle('active',isCam);
+  document.getElementById('tabGallery')?.classList.toggle('active',!isCam);
+  const t=document.getElementById('uploadTrigger');
+  if(!t)return;
+  t.setAttribute('for',isCam?'camInput':'galleryInput');
+  t.querySelector('.ui').textContent=isCam?'📷':'🖼';
+  t.querySelector('.ut').textContent=isCam?'Tag billede af prisskiltet':'Vælg billede fra galleriet';
+  t.querySelector('.us').textContent=isCam?'AI aflæser pris og navn automatisk':'Vælg et billede du allerede har taget';
+}
+async function handleImageFile(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async(ev)=>{
+    const img=document.getElementById('previewImg');
+    if(img){img.src=ev.target.result;img.style.display='block'}
+    const trigger=document.getElementById('uploadTrigger');
+    if(trigger)trigger.style.display='none';
+    if(!S.apiKey){toast('Tilføj API-nøgle i Indstillinger');return}
+    const proc=document.getElementById('aiProcessing');
+    const sugg=document.getElementById('aiSuggestion');
+    if(proc)proc.style.display='block';
+    if(sugg)sugg.style.display='none';
+    try{
+      const b64=ev.target.result.split(',')[1];
+      const result=await callVisionAPI(b64,file.type||'image/jpeg');
+      if(proc)proc.style.display='none';
+      if(result&&sugg){
+        sugg.style.display='block';
+        document.getElementById('aiSuggContent').innerHTML=`
+          <div style="margin-bottom:8px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">Navn</div>
+          <input class="field-input" id="aiName" value="${esc(result.name)}" style="font-size:14px;padding:10px 12px"></div>
+          <div style="margin-bottom:12px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">Pris</div>
+          <input class="field-input" id="aiPrice" value="${result.price}" type="number" step="0.01" style="font-size:14px;padding:10px 12px"></div>
+          <button class="btn-primary" style="padding:12px" onclick="applyAI()">Brug dette ➜</button>`;
+      }
+    }catch{if(proc)proc.style.display='none';toast('Kunne ikke aflæse billedet 😕')}
+  };
+  reader.readAsDataURL(file);
+}
+async function callVisionAPI(b64,mime){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:150,messages:[{role:'user',content:[
+      {type:'image',source:{type:'base64',media_type:mime,data:b64}},
+      {type:'text',text:'Look at this price tag or product image. Extract the item name and price. Reply ONLY with valid JSON, no markdown: {"name":"item name","price":9.99}. Use 0 if no price visible.'}
+    ]}]})});
+  const data=await res.json();
+  if(data.error)throw new Error(data.error.message);
+  return JSON.parse(data.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim());
+}
+function applyAI(){
+  const n=document.getElementById('aiName')?.value||'';
+  const p=document.getElementById('aiPrice')?.value||'';
+  const nameEl=document.getElementById('entryName');
+  const priceEl=document.getElementById('entryPrice');
+  if(nameEl)nameEl.value=n;
+  if(priceEl)priceEl.value=p;
+  const sugg=document.getElementById('aiSuggestion');
+  if(sugg)sugg.style.display='none';
+  toast('Udfyldt fra billede ✓');
+}
+
+// ══════════════════════════════════════════════
+// CALCULATOR
+// ══════════════════════════════════════════════
+let calcInput='0',calcFromCur='EUR',calcToCur='DKK';
+function getRate(from,to){
+  if(from===to)return 1;
+  const key=`${from}_${to}`,keyR=`${to}_${from}`;
+  if(S.customRates[key])return S.customRates[key];
+  if(S.customRates[keyR])return 1/S.customRates[keyR];
+  for(const p of S.persons){
+    if(p.currency===from&&p.homeCurrency===to)return p.rate;
+    if(p.currency===to&&p.homeCurrency===from)return 1/p.rate;
+  }
+  const fDKK=CURRENCIES[from]?.rate||1,tDKK=CURRENCIES[to]?.rate||1;
+  return fDKK/tDKK;
+}
+function buildCurOpts(selId,selected){
+  document.getElementById(selId).innerHTML=Object.entries(CURRENCIES).map(([c,i])=>`<option value="${c}" ${c===selected?'selected':''}>${i.flag} ${c}</option>`).join('');
+}
+function renderCalc(){
+  buildCurOpts('calcFrom',calcFromCur);buildCurOpts('calcTo',calcToCur);
+  document.getElementById('quickAmounts').innerHTML=[5,10,20,50,100,200].map(n=>`<button class="quick-btn" onclick="calcSetAmount(${n})">${n}</button>`).join('');
+  calcUpdate();renderRatesTable();
+}
+function calcUpdate(){
+  calcFromCur=document.getElementById('calcFrom').value;
+  calcToCur=document.getElementById('calcTo').value;
+  const amt=parseFloat(calcInput)||0,rate=getRate(calcFromCur,calcToCur);
+  document.getElementById('calcAmount').textContent=calcInput==='0'?'0':parseFloat(calcInput).toLocaleString('da-DK',{maximumFractionDigits:2});
+  document.getElementById('calcConverted').textContent=`= ${(amt*rate).toLocaleString('da-DK',{minimumFractionDigits:2,maximumFractionDigits:2})} ${calcToCur}`;
+  document.getElementById('calcRateInfo').textContent=`1 ${calcFromCur} = ${rate.toFixed(4)} ${calcToCur}`;
+}
+function calcKey(k){
+  if(k==='C')calcInput='0';
+  else if(k==='⌫')calcInput=calcInput.length>1?calcInput.slice(0,-1):'0';
+  else if(k==='+')calcInput=String((parseFloat(calcInput)||0)+50);
+  else if(k==='-')calcInput=String(Math.max(0,(parseFloat(calcInput)||0)-10));
+  else if(k==='.')calcInput.includes('.')?null:calcInput+='.';
+  else calcInput=calcInput==='0'?k:calcInput+k;
+  calcUpdate();
+}
+function calcSetAmount(n){calcInput=String(n);calcUpdate()}
+function calcSwap(){const t=calcFromCur;calcFromCur=calcToCur;calcToCur=t;document.getElementById('calcFrom').value=calcFromCur;document.getElementById('calcTo').value=calcToCur;calcUpdate()}
+function renderRatesTable(){
+  document.getElementById('ratesTable').innerHTML=[['EUR','DKK'],['USD','DKK'],['GBP','DKK'],['JPY','DKK'],['CNY','DKK'],['USD','EUR'],['GBP','EUR']].map(([f,t])=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:14px">${CURRENCIES[f]?.flag||''} ${f} → ${CURRENCIES[t]?.flag||''} ${t}</span>
+      <span style="font-size:14px;font-weight:600;color:var(--green)">${getRate(f,t).toFixed(4)}</span>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════
+function renderSettings(){settingsDraft=JSON.parse(JSON.stringify(S.persons));buildSettingsHTML()}
+function cancelSettings(){settingsDraft=null;navTo(currentPersonId?'person':'home')}
+function openPersonSettings(id){navTo('settings');setTimeout(()=>{const idx=S.persons.findIndex(p=>p.id===id);if(idx<0)return;const cards=document.getElementById('settingsContent').querySelectorAll('.person-setting-card');if(cards[idx])cards[idx].scrollIntoView({behavior:'smooth',block:'start'})},150)}
+
+function buildSettingsHTML(){
+  const el=document.getElementById('settingsContent');
+  let html=`<div class="api-section">
+    <div class="api-label">🤖 Anthropic API-nøgle</div>
+    <div class="api-sub">Bruges til AI-scanning af prisskilte.<br>Hent din nøgle på console.anthropic.com</div>
+    <div class="api-input-wrap">
+      <input class="api-input" id="apiKeyInput" type="password" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="updateApiKey(this.value)">
+      <button class="api-toggle" onclick="toggleApiVis()">👁</button>
+    </div>
+    <div class="api-status ${S.apiKey?'ok':''}" id="apiStatus">${S.apiKey?'✓ Nøgle gemt':''}</div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <span class="section-label">Personer & budgetter</span>
+  </div>`;
+
+  settingsDraft.forEach((p,i)=>{
+    const curOpts=Object.entries(CURRENCIES).map(([c,info])=>`<option value="${c}" ${c===p.currency?'selected':''}>${info.flag} ${c}</option>`).join('');
+    const homeOpts=Object.entries(CURRENCIES).map(([c,info])=>`<option value="${c}" ${c===p.homeCurrency?'selected':''}>${info.flag} ${c}</option>`).join('');
+    const swatches=AVATAR_COLORS.map(c=>`<div class="swatch ${c===p.color?'selected':''}" style="background:${c}" onclick="draftSetColor(${i},'${c}',this)"></div>`).join('');
+    const initial=p.name.charAt(0).toUpperCase()||'?';
+    html+=`<div class="person-setting-card">
+      <div class="psc-header">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div id="settingsAvatar_${i}" style="width:38px;height:38px;border-radius:50%;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white">${initial}</div>
+          <div class="psc-name">${esc(p.name)}</div>
+        </div>
+        <button class="psc-del" onclick="draftDelPerson(${i})">🗑</button>
+      </div>
+      <div class="field-wrap"><label class="field-label">Navn</label>
+        <input class="field-input" value="${esc(p.name)}" oninput="draftSet(${i},'name',this.value);updateSettingsAvatar(${i},this.value)"></div>
+      <div class="field-wrap"><label class="field-label">Avatar farve</label>
+        <div class="color-swatches">${swatches}</div></div>
+      <div class="two-col" style="margin-bottom:14px">
+        <div><label class="field-label">Budget</label>
+          <input class="field-input" type="number" value="${p.budget}" oninput="draftSet(${i},'budget',parseFloat(this.value)||0)"></div>
+        <div><label class="field-label">Hjemvaluta</label>
+          <select class="field-select" onchange="draftSetHomeCurrency(${i},this.value)">${homeOpts}</select></div>
+      </div>
+      <div class="two-col" style="margin-bottom:14px">
+        <div><label class="field-label">Rejsevaluta</label>
+          <select class="field-select" id="curSel_${i}" onchange="draftSetCurrency(${i},this.value)">${curOpts}</select></div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <label class="field-label" style="margin-bottom:0" id="rateLabel_${i}">Kurs (1 ${esc(p.currency)} =)</label>
+            <button onclick="draftRefreshRate(${i})" style="background:none;border:none;color:var(--blue);font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;padding:0" title="Hent seneste kurs">↺ Opdater</button>
+          </div>
+          <input class="field-input" id="rateInp_${i}" type="number" step="0.01" value="${p.rate}" oninput="draftSet(${i},'rate',parseFloat(this.value)||1)">
+        </div>
+      </div>
+      <label class="field-label">Kategorier</label>
+      <div class="cat-list">${p.categories.map((c,ci)=>`
+        <div class="cat-tag"><div style="width:8px;height:8px;border-radius:50%;background:${CAT_COLORS[ci%CAT_COLORS.length]}"></div>${esc(c)}<button class="cat-del" onclick="draftDelCat(${i},${ci})">✕</button></div>`).join('')}
+      </div>
+      <div class="cat-add-row">
+        <input class="cat-input" id="catInput_${i}" placeholder="Ny kategori…" onkeydown="if(event.key==='Enter')draftAddCat(${i})">
+        <button class="cat-add-btn" onclick="draftAddCat(${i})">+</button>
+      </div>
+    </div>`;
+  });
+  html+=`<button class="add-person-btn" onclick="draftAddPerson()">+ Tilføj person / budget</button><div style="height:16px"></div>`;
+  el.innerHTML=html;
+}
+
+function draftSet(i,f,v){if(settingsDraft[i])settingsDraft[i][f]=v}
+function draftSetCurrency(i,currency){
+  if(!settingsDraft[i])return;
+  settingsDraft[i].currency=currency;
+  const homeCur=settingsDraft[i].homeCurrency;
+  const autoRate=getAutoRate(currency,homeCur);
+  settingsDraft[i].rate=autoRate;
+  // Update the visible rate input immediately
+  const rateInp=document.getElementById(`rateInp_${i}`);
+  if(rateInp){
+    rateInp.value=autoRate;
+    rateInp.style.borderColor='var(--blue)';
+    setTimeout(()=>{if(rateInp)rateInp.style.borderColor=''},1200);
+  }
+  // Also update the kurs label text
+  const lbl=document.getElementById(`rateLabel_${i}`);
+  if(lbl)lbl.textContent=`Kurs (1 ${currency} =)`;
+}
+function draftSetHomeCurrency(i,homeCurrency){
+  if(!settingsDraft[i])return;
+  settingsDraft[i].homeCurrency=homeCurrency;
+  const currency=settingsDraft[i].currency;
+  const autoRate=getAutoRate(currency,homeCurrency);
+  settingsDraft[i].rate=autoRate;
+  const rateInp=document.getElementById(`rateInp_${i}`);
+  if(rateInp){
+    rateInp.value=autoRate;
+    rateInp.style.borderColor='var(--blue)';
+    setTimeout(()=>{if(rateInp)rateInp.style.borderColor=''},1200);
+  }
+}
+function draftRefreshRate(i){
+  if(!settingsDraft[i])return;
+  settingsDraft[i].rate=autoRate;
+  const rateInp=document.getElementById(`rateInp_${i}`);
+  if(rateInp){rateInp.value=autoRate;rateInp.style.borderColor='var(--green)';setTimeout(()=>rateInp.style.borderColor='',1200)}
+  toast(`Kurs opdateret: 1 ${settingsDraft[i].currency} = ${autoRate} ${settingsDraft[i].homeCurrency}`);
+}
+function getAutoRate(from,to){
+  if(from===to)return 1;
+  const fDKK=CURRENCIES[from]?.rate||1;
+  const tDKK=CURRENCIES[to]?.rate||1;
+  return parseFloat((fDKK/tDKK).toFixed(4));
+}
+function draftSetColor(i,color,el){
+  if(settingsDraft[i])settingsDraft[i].color=color;
+  el.closest('.color-swatches').querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  const av=document.getElementById(`settingsAvatar_${i}`);
+  if(av)av.style.background=color;
+}
+function updateSettingsAvatar(i,name){
+  const av=document.getElementById(`settingsAvatar_${i}`);
+  if(av)av.textContent=name?name.charAt(0).toUpperCase():'?';
+}
+function draftDelPerson(i){
+  const p=settingsDraft[i];
+  if(!p)return;
+  showConfirm({
+    icon:'🗑️',
+    title:`Slet ${p.name}?`,
+    sub:'Profil og alle køb slettes permanent',
+    confirmLabel:'Ja, slet',
+    confirmStyle:'background:var(--red)',
+    onConfirm:()=>{
+      const id=settingsDraft[i].id;
+      S.entries=S.entries.filter(e=>e.personId!==id);
+      settingsDraft.splice(i,1);
+      buildSettingsHTML();
+    }
+  });
+}
+function draftAddPerson(){
+  settingsDraft.push({id:'p'+Date.now(),name:'Ny person',color:AVATAR_COLORS[settingsDraft.length%AVATAR_COLORS.length],budget:1000,currency:'EUR',rate:7.46,homeCurrency:'DKK',categories:['Mad','Andet']});
+  buildSettingsHTML();setTimeout(()=>document.getElementById('settingsContent').scrollTop=99999,50);
+}
+function draftAddCat(i){const inp=document.getElementById(`catInput_${i}`);const v=inp?.value.trim();if(!v)return;if(!settingsDraft[i].categories.includes(v))settingsDraft[i].categories.push(v);inp.value='';buildSettingsHTML()}
+function draftDelCat(i,ci){settingsDraft[i].categories.splice(ci,1);buildSettingsHTML()}
+function saveSettings(){
+  settingsDraft.forEach(dp=>{const ex=S.persons.find(p=>p.id===dp.id);if(ex)Object.assign(ex,dp);else S.persons.push(dp)});
+  S.persons=S.persons.filter(p=>settingsDraft.find(d=>d.id===p.id));
+  if(currentPersonId&&!S.persons.find(p=>p.id===currentPersonId))currentPersonId=S.persons[0]?.id||null;
+  saveState();toast('Gemt! ✓');navTo(currentPersonId?'person':'home');
+}
+function updateApiKey(val){
+  S.apiKey=val;saveState();
+  const st=document.getElementById('apiStatus');
+  if(val.startsWith('sk-ant')){st.textContent='✓ Nøgle gemt';st.className='api-status ok'}
+  else if(val){st.textContent='Ser ikke ud som en gyldig nøgle';st.className='api-status err'}
+  else{st.textContent='';st.className='api-status'}
+}
+let apiVis=false;
+function toggleApiVis(){apiVis=!apiVis;document.getElementById('apiKeyInput').type=apiVis?'text':'password'}
+
+// ══════════════════════════════════════════════
+// MODAL HELPERS
+// ══════════════════════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+let toastTimer;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+
+// ══════════════════════════════════════════════
+// ONLINE / OFFLINE INDICATOR
+// ══════════════════════════════════════════════
+function updateOnlineStatus(){
+  const ready=navigator.onLine && !!S.apiKey;
+  const dot=document.getElementById('onlineDot');
+  const label=document.getElementById('onlineLabel');
+  if(!dot||!label)return;
+  if(ready){
+    dot.style.background='#06d6a0';
+    dot.style.boxShadow='0 0 6px #06d6a0';
+    label.textContent='AI klar';
+    label.style.color='var(--text3)';
+  } else {
+    dot.style.background='#ff6b6b';
+    dot.style.boxShadow='0 0 6px #ff6b6b';
+    label.textContent=!navigator.onLine?'Offline — AI ikke tilgængelig':'AI scanning ikke aktiveret';
+    label.style.color='var(--red)';
+  }
+}
+window.addEventListener('online',  updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+npColor=AVATAR_COLORS[0];
+renderHome();
+</script>
+</body>
+</html>
