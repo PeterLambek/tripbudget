@@ -1135,7 +1135,7 @@ async function handleImageFile(file){
     if(img){img.src=ev.target.result;img.style.display='block'}
     const trigger=document.getElementById('uploadTrigger');
     if(trigger)trigger.style.display='none';
-    if(!S.apiKey){toast('Tilføj API-nøgle i Indstillinger');return}
+    if(!S.apiKey&&false){toast('Tilføj API-nøgle i Indstillinger');return}
     const proc=document.getElementById('aiProcessing');
     const sugg=document.getElementById('aiSuggestion');
     if(proc)proc.style.display='block';
