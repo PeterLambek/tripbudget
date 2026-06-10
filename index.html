@@ -1,16 +1,37 @@
 <!DOCTYPE html>
-<html lang="da">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0047)file:///C:/Users/Lambek/Downloads/index_18.html -->
+<html lang="da"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0a0a14">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TripBudget">
 <title>TripBudget</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="file:///C:/Users/Lambek/Downloads/manifest.json">
+<link rel="apple-touch-icon" href="file:///C:/Users/Lambek/Downloads/icons/icon-192.png">
+<link href="./index_files/css2" rel="stylesheet">
+<script type="module">
+// ── FIREBASE SETUP ──
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, onValue, get } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC7cl2cvwq0Kt0rcehb62E_U7QYg99fm2k",
+  authDomain: "tripbudget-5f70f.firebaseapp.com",
+  databaseURL: "https://tripbudget-5f70f-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "tripbudget-5f70f",
+  storageBucket: "tripbudget-5f70f.firebasestorage.app",
+  messagingSenderId: "810398305118",
+  appId: "1:810398305118:web:01dfd0e8790b22c02b1dcf"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getDatabase(fbApp);
+window._fb = { db, ref, set, onValue, get };
+window._fbReady = true;
+window.dispatchEvent(new Event('fbReady'));
+</script>
 <style>
 :root{
   --bg:#0a0a14;--s1:#13131f;--s2:#1c1c2e;--s3:#25253d;--border:rgba(255,255,255,0.07);
@@ -119,6 +140,10 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 .field-select{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);padding:13px 14px;color:var(--text2);font-family:'Outfit',sans-serif;font-size:15px;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2388889a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .section-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1.2px;text-transform:uppercase}
+/* Trip code */
+.trip-banner{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.trip-code-badge{background:var(--s3);border-radius:8px;padding:6px 12px;font-size:15px;font-weight:700;letter-spacing:2px;color:var(--yellow);font-family:monospace}
+.trip-section-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin:16px 0 8px;padding:0 2px}
 
 /* Buttons */
 .btn-primary{width:100%;padding:15px;background:var(--red);border:none;border-radius:var(--r-sm);color:white;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .15s;box-shadow:0 6px 20px rgba(255,107,107,.3)}
@@ -205,17 +230,71 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 <!-- ══ SCREEN: HOME (profile select) ══ -->
 <div class="screen active" id="screen-home">
   <div class="topbar">
-    <div class="topbar-logo" onclick="navTo('home')" style="cursor:pointer">Trip<span>Budget</span></div>
-    <span id="homeSubtitle" style="font-size:12px;color:var(--text3)"></span>
+    <div class="topbar-logo" onclick="navTo(&#39;home&#39;)" style="cursor:pointer">Trip<span>Budget</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button onclick="openTripModal()" style="background: none; border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: Outfit, sans-serif; color: var(--text3);" id="tripBtn">🌍 Del rejse</button>
+    </div>
   </div>
-  <div class="scroll-area" id="homeContent"></div>
+  <div class="scroll-area" id="homeContent"><div style="margin:12px 0 16px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:#06d6a0;opacity:0.07;pointer-events:none"></div>
+    <div style="position:absolute;bottom:-30px;left:30px;width:80px;height:80px;border-radius:50%;background:var(--purple);opacity:0.05;pointer-events:none"></div>
+    <div style="font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Samlet tilbage</div>
+    <div style="font-size:38px;font-weight:700;letter-spacing:-2px;color:#06d6a0;line-height:1;margin-bottom:4px">2761 <span style="font-size:18px;font-weight:500;opacity:.7">DKK</span></div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px">af 3000 DKK samlet budget</div>
+    <div style="height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
+      <div style="height:100%;width:7.952633333333332%;background:linear-gradient(90deg,#06d6a0,#06d6a0aa);border-radius:3px;transition:width .5s ease"></div>
+    </div>
+  </div><div style="background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+    <div style="padding:10px 14px 8px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Profiler</div>
+      <button onclick="openAllProfilesMenu()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:0 2px;letter-spacing:2px;line-height:1" title="Administrer alle profiler" onmouseenter="this.style.color=&#39;var(--text)&#39;" onmouseleave="this.style.color=&#39;var(--text3)&#39;">⋯</button>
+    </div><div style="display:flex;align-items:center;border-top:1px solid var(--border)" ontouchstart="this.querySelector(&#39;.pr&#39;).style.background=&#39;var(--s2)&#39;" ontouchend="this.querySelector(&#39;.pr&#39;).style.background=&#39;&#39;">
+      <div class="pr" onclick="navTo(&#39;person&#39;,&#39;p1&#39;)" style="display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;flex:1;min-width:0" onmouseenter="this.style.background=&#39;var(--s2)&#39;" onmouseleave="this.style.background=&#39;&#39;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#ff6b6b;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0">R</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+            <span style="font-size:15px;font-weight:600">Rosa</span>
+            <span style="font-size:14px;font-weight:700;color:#06d6a0">1500 DKK</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div style="flex:1;height:4px;background:var(--s3);border-radius:2px;overflow:hidden">
+              <div style="height:100%;width:0%;background:#06d6a0;border-radius:2px"></div>
+            </div>
+            <span style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">brugt 0 DKK · 0 EUR</span>
+          </div>
+        </div>
+        <div style="color:var(--text3);font-size:18px;flex-shrink:0;margin-left:4px">›</div>
+      </div>
+      <button onclick="openHomePersonMenu(&#39;p1&#39;)" style="background:none;border:none;color:var(--text3);font-size:20px;padding:0 14px;cursor:pointer;letter-spacing:2px;flex-shrink:0;align-self:stretch;display:flex;align-items:center" onmouseenter="this.style.color=&#39;var(--text)&#39;" onmouseleave="this.style.color=&#39;var(--text3)&#39;">⋯</button>
+    </div><div style="display:flex;align-items:center;border-top:1px solid var(--border)" ontouchstart="this.querySelector(&#39;.pr&#39;).style.background=&#39;var(--s2)&#39;" ontouchend="this.querySelector(&#39;.pr&#39;).style.background=&#39;&#39;">
+      <div class="pr" onclick="navTo(&#39;person&#39;,&#39;p2&#39;)" style="display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;flex:1;min-width:0" onmouseenter="this.style.background=&#39;var(--s2)&#39;" onmouseleave="this.style.background=&#39;&#39;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#4cc9f0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0">L</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+            <span style="font-size:15px;font-weight:600">Lily</span>
+            <span style="font-size:14px;font-weight:700;color:#06d6a0">1261 DKK</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div style="flex:1;height:4px;background:var(--s3);border-radius:2px;overflow:hidden">
+              <div style="height:100%;width:15.905266666666664%;background:#06d6a0;border-radius:2px"></div>
+            </div>
+            <span style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">brugt 239 DKK · 253 CNY</span>
+          </div>
+        </div>
+        <div style="color:var(--text3);font-size:18px;flex-shrink:0;margin-left:4px">›</div>
+      </div>
+      <button onclick="openHomePersonMenu(&#39;p2&#39;)" style="background:none;border:none;color:var(--text3);font-size:20px;padding:0 14px;cursor:pointer;letter-spacing:2px;flex-shrink:0;align-self:stretch;display:flex;align-items:center" onmouseenter="this.style.color=&#39;var(--text)&#39;" onmouseleave="this.style.color=&#39;var(--text3)&#39;">⋯</button>
+    </div><div onclick="openNewPersonModal()" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--border);cursor:pointer;" onmouseenter="this.style.background=&#39;var(--s2)&#39;" onmouseleave="this.style.background=&#39;&#39;" ontouchstart="this.style.background=&#39;var(--s2)&#39;" ontouchend="this.style.background=&#39;&#39;">
+    <div style="width:40px;height:40px;border-radius:50%;background:var(--s3);border:2px dashed var(--text3);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text3);flex-shrink:0">＋</div>
+    <span style="font-size:15px;font-weight:500;color:var(--text3)">Tilføj ny profil</span>
+  </div></div></div>
 </div>
 
 <!-- ══ SCREEN: PERSON VIEW ══ -->
 <div class="screen" id="screen-person">
   <div class="pv-header">
     <div class="pv-top">
-      <button class="pv-back" onclick="navTo('home')">‹</button>
+      <button class="pv-back" onclick="navTo(&#39;home&#39;)">‹</button>
       <button class="pv-menu" onclick="openPersonMenu()" id="pvMenuBtn">⋯</button>
     </div>
     <div class="pv-avatar-row">
@@ -229,8 +308,8 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
   <div class="pv-summary" id="pvSummary"></div>
   <div class="pv-progress"><div class="pv-progress-fill" id="pvProgressFill"></div></div>
   <div class="pv-tabs">
-    <button class="pv-tab active" id="pvTabAdd" onclick="switchPVTab('add')">➕ Tilføj</button>
-    <button class="pv-tab" id="pvTabHistory" onclick="switchPVTab('history')">📋 Historik</button>
+    <button class="pv-tab active" id="pvTabAdd" onclick="switchPVTab(&#39;add&#39;)">➕ Tilføj</button>
+    <button class="pv-tab" id="pvTabHistory" onclick="switchPVTab(&#39;history&#39;)">📋 Historik</button>
   </div>
   <div class="scroll-area" id="pvContent"></div>
 </div>
@@ -238,7 +317,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 <!-- ══ SCREEN: CALCULATOR ══ -->
 <div class="screen" id="screen-calc">
   <div class="topbar">
-    <div class="topbar-logo" onclick="navTo('home')" style="cursor:pointer">Trip<span>Budget</span></div>
+    <div class="topbar-logo" onclick="navTo(&#39;home&#39;)" style="cursor:pointer">Trip<span>Budget</span></div>
     <span style="font-size:12px;color:var(--text3)">Omregner</span>
   </div>
   <div class="scroll-area">
@@ -255,21 +334,21 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
       </div>
       <div class="quick-amounts" id="quickAmounts"></div>
       <div class="calc-keypad">
-        <button class="calc-key" onclick="calcKey('7')">7</button>
-        <button class="calc-key" onclick="calcKey('8')">8</button>
-        <button class="calc-key" onclick="calcKey('9')">9</button>
-        <button class="calc-key action" onclick="calcKey('C')">C</button>
-        <button class="calc-key" onclick="calcKey('4')">4</button>
-        <button class="calc-key" onclick="calcKey('5')">5</button>
-        <button class="calc-key" onclick="calcKey('6')">6</button>
-        <button class="calc-key action" onclick="calcKey('⌫')">⌫</button>
-        <button class="calc-key" onclick="calcKey('1')">1</button>
-        <button class="calc-key" onclick="calcKey('2')">2</button>
-        <button class="calc-key" onclick="calcKey('3')">3</button>
-        <button class="calc-key" onclick="calcKey('+')">+50</button>
-        <button class="calc-key wide" onclick="calcKey('0')">0</button>
-        <button class="calc-key" onclick="calcKey('.')">.</button>
-        <button class="calc-key" onclick="calcKey('-')">-10</button>
+        <button class="calc-key" onclick="calcKey(&#39;7&#39;)">7</button>
+        <button class="calc-key" onclick="calcKey(&#39;8&#39;)">8</button>
+        <button class="calc-key" onclick="calcKey(&#39;9&#39;)">9</button>
+        <button class="calc-key action" onclick="calcKey(&#39;C&#39;)">C</button>
+        <button class="calc-key" onclick="calcKey(&#39;4&#39;)">4</button>
+        <button class="calc-key" onclick="calcKey(&#39;5&#39;)">5</button>
+        <button class="calc-key" onclick="calcKey(&#39;6&#39;)">6</button>
+        <button class="calc-key action" onclick="calcKey(&#39;⌫&#39;)">⌫</button>
+        <button class="calc-key" onclick="calcKey(&#39;1&#39;)">1</button>
+        <button class="calc-key" onclick="calcKey(&#39;2&#39;)">2</button>
+        <button class="calc-key" onclick="calcKey(&#39;3&#39;)">3</button>
+        <button class="calc-key" onclick="calcKey(&#39;+&#39;)">+50</button>
+        <button class="calc-key wide" onclick="calcKey(&#39;0&#39;)">0</button>
+        <button class="calc-key" onclick="calcKey(&#39;.&#39;)">.</button>
+        <button class="calc-key" onclick="calcKey(&#39;-&#39;)">-10</button>
       </div>
     </div>
     <div class="card">
@@ -291,25 +370,27 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 
 <!-- ══ BOTTOM NAV ══ -->
 <nav class="bottom-nav">
-  <button class="nav-btn active" id="nav-home" onclick="navTo('home')"><span class="ni">🏠</span><span class="nl">Hjem</span></button>
-  <button class="nav-btn" id="nav-calc" onclick="navTo('calc')"><span class="ni">🧮</span><span class="nl">Omregner</span></button>
-  <button class="nav-btn" id="nav-settings" onclick="navTo('settings')"><span class="ni">⚙️</span><span class="nl">Indstil</span></button>
+  <button class="nav-btn active" id="nav-home" onclick="navTo(&#39;home&#39;)"><span class="ni">🏠</span><span class="nl">Hjem</span></button>
+  <button class="nav-btn" id="nav-calc" onclick="navTo(&#39;calc&#39;)"><span class="ni">🧮</span><span class="nl">Omregner</span></button>
+  <button class="nav-btn" id="nav-settings" onclick="navTo(&#39;settings&#39;)"><span class="ni">⚙️</span><span class="nl">Indstil</span></button>
 </nav>
 
 <!-- FAB for adding entries inside person view -->
-<button class="add-fab" id="addFab" onclick="switchPVTab('add')">＋</button>
+<button class="add-fab" id="addFab" onclick="switchPVTab(&#39;add&#39;)">＋</button>
 
 <!-- ══ MODALS ══ -->
 <div class="modal-overlay" id="personMenuModal"><div class="modal-box"><div id="personMenuContent"></div></div></div>
 <div class="modal-overlay" id="newPersonModal"><div class="modal-box"><div class="modal-title">Ny profil</div><div id="newPersonContent"></div></div></div>
 <div class="modal-overlay" id="editEntryModal"><div class="modal-box"><div class="modal-title">Rediger køb</div><div id="editEntryContent"></div></div></div>
 <div class="modal-overlay" id="confirmModal"><div class="modal-box"><div id="confirmContent"></div></div></div>
+<div class="modal-overlay" id="tripModal">
+  <div class="modal-box">
+    <div id="tripModalContent"></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════
-// CONSTANTS
-// ══════════════════════════════════════════════
 const CURRENCIES={
   DKK:{name:'Danske kroner',flag:'🇩🇰',rate:1},
   EUR:{name:'Euro',flag:'🇪🇺',rate:7.46},
@@ -334,8 +415,15 @@ const DEFAULTS={
   customRates:{}
 };
 function loadState(){try{const s=JSON.parse(localStorage.getItem('tb3_state'));if(!s)return DEFAULTS;if(!s.customRates)s.customRates={};s.persons.forEach(p=>{if(!p.color)p.color=AVATAR_COLORS[0]});return s}catch{return DEFAULTS}}
-function saveState(){localStorage.setItem('tb3_state',JSON.stringify(S))}
+function saveState(){
+  localStorage.setItem('tb3_state',JSON.stringify(S));
+  syncToFirebase();
+}
 let S=loadState();
+
+// Trip code state
+let tripCode=localStorage.getItem('tb3_tripCode')||null;
+let fbUnsubscribe=null;
 
 let currentScreen='home';
 let currentPersonId=null;
@@ -366,6 +454,12 @@ function navTo(name,personId){
 // HOME — PROFILE SELECT
 // ══════════════════════════════════════════════
 function renderHome(){
+  // Update trip button
+  const tripBtn=document.getElementById('tripBtn');
+  if(tripBtn){
+    tripBtn.textContent=tripCode?`🌍 ${tripCode}`:'🌍 Del rejse';
+    tripBtn.style.color=tripCode?'var(--yellow)':'var(--text3)';
+  }
   const el=document.getElementById('homeContent');
   if(!S.persons.length){
     el.innerHTML=`<div style="text-align:center;padding:60px 24px">
@@ -374,7 +468,7 @@ function renderHome(){
       <div style="font-size:14px;color:var(--text3);margin-bottom:28px">Opret en profil for at komme i gang</div>
       <button class="btn-primary" style="max-width:240px;margin:0 auto" onclick="openNewPersonModal()">Opret profil</button>
     </div>`;
-    document.getElementById('homeSubtitle').textContent='';
+    
     return;
   }
 
@@ -389,7 +483,7 @@ function renderHome(){
   });
   const totalPct=Math.min(100,(totalSpentHome/Math.max(totalBudget,1))*100);
   const totalCol=totalPct<60?'#06d6a0':totalPct<85?'#ffd166':'#ff6b6b';
-  document.getElementById('homeSubtitle').textContent='';
+  
 
   // Hero banner
   let html=`<div style="margin:12px 0 16px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden">
@@ -1114,7 +1208,7 @@ async function handleImageFile(file){
   reader.readAsDataURL(file);
 }
 async function callVisionAPI(b64,mime){
-  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+  const res=await fetch('https://tripbudget-api.peterlambek.workers.dev/',{method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01'},
     body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:150,messages:[{role:'user',content:[
       {type:'image',source:{type:'base64',media_type:mime,data:b64}},
@@ -1368,6 +1462,128 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 
 // ══════════════════════════════════════════════
+// FIREBASE SYNC
+// ══════════════════════════════════════════════
+let _fbSyncPause=false;
+
+function syncToFirebase(){
+  if(!tripCode||!window._fb||_fbSyncPause)return;
+  const {db,ref,set}=window._fb;
+  const data={persons:S.persons,entries:S.entries,updatedAt:Date.now()};
+  set(ref(db,`trips/${tripCode}`),data).catch(e=>console.warn('FB sync error',e));
+}
+
+function subscribeToTrip(code){
+  if(fbUnsubscribe){fbUnsubscribe();fbUnsubscribe=null;}
+  if(!window._fb)return;
+  const {db,ref,onValue}=window._fb;
+  fbUnsubscribe=onValue(ref(db,`trips/${code}`),snap=>{
+    const data=snap.val();
+    if(!data)return;
+    _fbSyncPause=true;
+    S.persons=data.persons||[];
+    S.entries=data.entries||[];
+    S.persons.forEach(p=>{if(!p.color)p.color=AVATAR_COLORS[0]});
+    localStorage.setItem('tb3_state',JSON.stringify(S));
+    _fbSyncPause=false;
+    if(currentScreen==='home')renderHome();
+    if(currentScreen==='person')renderPersonView();
+  });
+}
+
+function generateTripCode(){
+  return Math.random().toString(36).substring(2,8).toUpperCase();
+}
+
+function openTripModal(){
+  document.getElementById('tripModalContent').innerHTML=`
+    <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+      <div style="font-size:17px;font-weight:600;margin-bottom:4px">🌍 Delt rejse</div>
+      <div style="font-size:13px;color:var(--text3)">Del din rejse med familie så alle kan se og tilføje køb</div>
+    </div>
+    ${tripCode?`
+    <div style="background:var(--s2);border-radius:var(--r-sm);padding:16px;text-align:center;margin-bottom:16px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Din rejsekode</div>
+      <div style="font-size:28px;font-weight:700;letter-spacing:4px;color:var(--yellow);font-family:monospace;margin-bottom:8px">${tripCode}</div>
+      <div style="font-size:12px;color:var(--text3)">Del denne kode med familien</div>
+    </div>
+    <button class="btn-secondary" onclick="copyTripCode()" style="margin-bottom:8px">📋 Kopiér kode</button>
+    <button class="btn-secondary" onclick="leaveTrip()" style="color:var(--red)">Forlad delt rejse</button>
+    <button class="btn-secondary" onclick="closeModal('tripModal')" style="margin-top:4px">Luk</button>
+    `:`
+    <button class="btn-primary" onclick="createTrip()" style="margin-bottom:10px">✨ Opret ny delt rejse</button>
+    <div style="text-align:center;color:var(--text3);font-size:13px;margin:8px 0">— eller —</div>
+    <div class="field-wrap" style="margin-bottom:10px">
+      <label class="field-label">Tilslut med kode</label>
+      <input class="field-input" id="joinCodeInput" placeholder="F.eks. ABC123" style="text-transform:uppercase;letter-spacing:2px;font-family:monospace;font-size:18px;text-align:center" maxlength="6">
+    </div>
+    <button class="btn-secondary" onclick="joinTrip()">Tilslut rejse →</button>
+    <button class="btn-secondary" onclick="closeModal('tripModal')" style="margin-top:8px">Annuller</button>
+    `}`;
+  openModal('tripModal');
+}
+
+async function createTrip(){
+  const code=generateTripCode();
+  tripCode=code;
+  localStorage.setItem('tb3_tripCode',code);
+  if(window._fb){
+    const {db,ref,set}=window._fb;
+    const data={persons:S.persons,entries:S.entries,updatedAt:Date.now()};
+    await set(ref(db,`trips/${code}`),data);
+  }
+  subscribeToTrip(code);
+  openTripModal();
+  toast(`Rejse oprettet! Kode: ${code}`);
+}
+
+async function joinTrip(){
+  const input=document.getElementById('joinCodeInput');
+  const code=input?.value.trim().toUpperCase();
+  if(!code||code.length<4){toast('Indtast en gyldig kode');return}
+  if(!window._fb){toast('Forbinder til database...');return}
+  const {db,ref,get}=window._fb;
+  const snap=await get(ref(db,`trips/${code}`));
+  if(!snap.exists()){toast('Kode ikke fundet — tjek og prøv igen');return}
+  const data=snap.val();
+  tripCode=code;
+  localStorage.setItem('tb3_tripCode',code);
+  _fbSyncPause=true;
+  S.persons=data.persons||[];
+  S.entries=data.entries||[];
+  S.persons.forEach(p=>{if(!p.color)p.color=AVATAR_COLORS[0]});
+  localStorage.setItem('tb3_state',JSON.stringify(S));
+  _fbSyncPause=false;
+  subscribeToTrip(code);
+  closeModal('tripModal');
+  renderHome();
+  toast(`Tilsluttet rejse ${code}! ✓`);
+}
+
+function leaveTrip(){
+  showConfirm({
+    icon:'🚪',
+    title:'Forlad delt rejse?',
+    sub:'Dine lokale data beholdes men synkronisering stopper',
+    confirmLabel:'Ja, forlad',
+    onConfirm:()=>{
+      if(fbUnsubscribe){fbUnsubscribe();fbUnsubscribe=null;}
+      tripCode=null;
+      localStorage.removeItem('tb3_tripCode');
+      closeModal('tripModal');
+      renderHome();
+      toast('Forladt delt rejse');
+    }
+  });
+}
+
+function copyTripCode(){
+  if(tripCode){
+    navigator.clipboard.writeText(tripCode).then(()=>toast('Kode kopieret! ✓')).catch(()=>toast(`Kode: ${tripCode}`));
+  }
+}
+
+// ══════════════════════════════════════════════
 // ONLINE / OFFLINE INDICATOR
 // ══════════════════════════════════════════════
 function updateOnlineStatus(){
@@ -1394,7 +1610,18 @@ window.addEventListener('offline', updateOnlineStatus);
 // INIT
 // ══════════════════════════════════════════════
 npColor=AVATAR_COLORS[0];
+
+// Reconnect to Firebase trip if we had one
+if(tripCode){
+  if(window._fbReady){
+    subscribeToTrip(tripCode);
+  } else {
+    window.addEventListener('fbReady',()=>subscribeToTrip(tripCode),{once:true});
+  }
+}
+
 renderHome();
 </script>
-</body>
-</html>
+
+
+</body></html>
