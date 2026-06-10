@@ -549,7 +549,10 @@ function renderAddTab(p){
         </div>
       </div>
       <div class="upload-body">
-        <img id="previewImg" class="preview-img">
+        <div style="position:relative">
+          <img id="previewImg" class="preview-img">
+          <button id="clearImgBtn" onclick="clearPreviewImage()" style="display:none;position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;line-height:1">✕</button>
+        </div>
         <div class="ai-processing" id="aiProcessing"><span class="spin">⟳</span>Analyserer…</div>
         <div class="ai-suggestion" id="aiSuggestion"><div class="ai-tag">✦ AI foreslår</div><div id="aiSuggContent"></div></div>
         <label class="upload-trigger" id="uploadTrigger" for="camInput">
@@ -588,7 +591,23 @@ function renderAddTab(p){
   updateOnlineStatus();
 }
 
-function submitEntry(){
+function clearPreviewImage(){
+  const img=document.getElementById('previewImg');
+  const btn=document.getElementById('clearImgBtn');
+  const trigger=document.getElementById('uploadTrigger');
+  const sugg=document.getElementById('aiSuggestion');
+  const proc=document.getElementById('aiProcessing');
+  if(img){img.src='';img.style.display='none';}
+  if(btn)btn.style.display='none';
+  if(trigger)trigger.style.display='flex';
+  if(sugg)sugg.style.display='none';
+  if(proc)proc.style.display='none';
+  // Reset file inputs so same file can be picked again
+  const cam=document.getElementById('camInput');
+  const gal=document.getElementById('galleryInput');
+  if(cam)cam.value='';
+  if(gal)gal.value='';
+}
   const name=document.getElementById('entryName')?.value.trim();
   const price=parseFloat(document.getElementById('entryPrice')?.value);
   const cat=document.getElementById('entryCat')?.value;
@@ -1129,7 +1148,9 @@ async function handleImageFile(file){
   const reader=new FileReader();
   reader.onload=async(ev)=>{
     const img=document.getElementById('previewImg');
-    if(img){img.src=ev.target.result;img.style.display='block'}
+    if(img){img.src=ev.target.result;img.style.display='block';}
+    const btn=document.getElementById('clearImgBtn');
+    if(btn)btn.style.display='block';
     const trigger=document.getElementById('uploadTrigger');
     if(trigger)trigger.style.display='none';
     if(!S.apiKey&&false){toast('Tilføj API-nøgle i Indstillinger');return}
