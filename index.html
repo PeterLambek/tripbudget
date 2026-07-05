@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="da">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0044)file:///C:/Users/Lambek/Downloads/index.html -->
+<html lang="da"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0a0a14">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TripBudget">
 <title>TripBudget</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="file:///C:/Users/Lambek/Downloads/manifest.json">
+<link rel="apple-touch-icon" href="file:///C:/Users/Lambek/Downloads/icons/icon-192.png">
+<link href="./index_files/css2" rel="stylesheet">
 <script type="module">
 // ── FIREBASE SETUP ──
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -94,23 +94,6 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 .pv-tab{flex:1;padding:12px 8px;text-align:center;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'Outfit',sans-serif}
 .pv-tab.active{color:var(--red);border-bottom-color:var(--red)}
 
-/* ── ADD ENTRY ── */
-.upload-tabs{display:flex;border-bottom:1px solid var(--border)}
-.upload-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;transition:all .2s;background:none;border:none;font-family:'Outfit',sans-serif}
-.upload-tab.active{color:var(--yellow);background:var(--s3)}
-.upload-body{padding:14px}
-.upload-trigger{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;width:100%;padding:10px 0}
-.upload-trigger .ui{font-size:28px}
-.upload-trigger .ut{font-size:13px;font-weight:500;color:var(--text2)}
-.upload-trigger .us{font-size:11px;color:var(--text3)}
-#camInput,#galleryInput{display:none}
-.preview-img{width:100%;border-radius:var(--r-sm);margin:0 0 10px;display:none;max-height:180px;object-fit:cover}
-.ai-processing{display:none;text-align:center;padding:14px;color:var(--text2);font-size:13px}
-.ai-processing .spin{font-size:24px;display:block;margin-bottom:6px;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.ai-suggestion{display:none;background:var(--s2);border:1px solid var(--yellow);border-radius:var(--r-sm);padding:14px;margin-top:8px}
-.ai-tag{font-size:10px;font-weight:600;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
-
 /* ── HISTORY ENTRIES ── */
 .entry-item{display:flex;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;margin-bottom:8px;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}}
@@ -186,16 +169,6 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 .cat-add-row{display:flex;gap:8px}
 .cat-input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;outline:none}
 .cat-add-btn{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--yellow);cursor:pointer;font-size:18px}
-.api-section{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
-.api-label{font-size:13px;font-weight:600;margin-bottom:4px}
-.api-sub{font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5}
-.api-input-wrap{position:relative}
-.api-input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 44px 12px 14px;color:var(--text);font-family:monospace;font-size:13px;outline:none}
-.api-input:focus{border-color:var(--blue)}
-.api-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px}
-.api-status{font-size:11px;margin-top:6px}
-.api-status.ok{color:var(--green)}
-.api-status.err{color:var(--red)}
 .add-person-btn{width:100%;padding:14px;background:var(--s1);border:2px dashed var(--border);border-radius:var(--r);color:var(--text2);cursor:pointer;font-size:14px;font-family:'Outfit',sans-serif;transition:all .2s}
 .add-person-btn:active{border-color:var(--green);color:var(--green)}
 
@@ -230,21 +203,71 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 <!-- ══ SCREEN: HOME (profile select) ══ -->
 <div class="screen active" id="screen-home">
   <div class="topbar">
-    <div class="topbar-logo" onclick="navTo('home')" style="cursor:pointer">Trip<span>Budget</span></div>
+    <div class="topbar-logo" onclick="navTo(&#39;home&#39;)" style="cursor:pointer">Trip<span>Budget</span></div>
     <div style="display:flex;align-items:center;gap:10px">
-      <button onclick="openTripModal()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif" id="tripBtn">
-        🌍 Del rejse
-      </button>
+      <button onclick="openTripModal()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;font-family:&#39;Outfit&#39;,sans-serif" id="tripBtn">🌍 Del rejse</button>
     </div>
   </div>
-  <div class="scroll-area" id="homeContent"></div>
+  <div class="scroll-area" id="homeContent"><div style="margin:12px 0 16px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:#06d6a0;opacity:0.07;pointer-events:none"></div>
+    <div style="position:absolute;bottom:-30px;left:30px;width:80px;height:80px;border-radius:50%;background:var(--purple);opacity:0.05;pointer-events:none"></div>
+    <div style="font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Samlet tilbage</div>
+    <div style="font-size:38px;font-weight:700;letter-spacing:-2px;color:#06d6a0;line-height:1;margin-bottom:4px">2761 <span style="font-size:18px;font-weight:500;opacity:.7">DKK</span></div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px">af 3000 DKK samlet budget</div>
+    <div style="height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
+      <div style="height:100%;width:7.952633333333332%;background:linear-gradient(90deg,#06d6a0,#06d6a0aa);border-radius:3px;transition:width .5s ease"></div>
+    </div>
+  </div><div style="background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+    <div style="padding:10px 14px 8px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Profiler</div>
+      <button onclick="openAllProfilesMenu()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:0 2px;letter-spacing:2px;line-height:1" title="Administrer alle profiler" onmouseenter="this.style.color=&#39;var(--text)&#39;" onmouseleave="this.style.color=&#39;var(--text3)&#39;">⋯</button>
+    </div><div style="display:flex;align-items:center;border-top:1px solid var(--border)" ontouchstart="this.querySelector(&#39;.pr&#39;).style.background=&#39;var(--s2)&#39;" ontouchend="this.querySelector(&#39;.pr&#39;).style.background=&#39;&#39;">
+      <div class="pr" onclick="navTo(&#39;person&#39;,&#39;p1&#39;)" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; flex: 1 1 0%; min-width: 0px;" onmouseenter="this.style.background=&#39;var(--s2)&#39;" onmouseleave="this.style.background=&#39;&#39;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#ff6b6b;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0">R</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+            <span style="font-size:15px;font-weight:600">Rosa</span>
+            <span style="font-size:14px;font-weight:700;color:#06d6a0">1500 DKK</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div style="flex:1;height:4px;background:var(--s3);border-radius:2px;overflow:hidden">
+              <div style="height:100%;width:0%;background:#06d6a0;border-radius:2px"></div>
+            </div>
+            <span style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">brugt 0 DKK · 0 EUR</span>
+          </div>
+        </div>
+        <div style="color:var(--text3);font-size:18px;flex-shrink:0;margin-left:4px">›</div>
+      </div>
+      <button onclick="openHomePersonMenu(&#39;p1&#39;)" style="background:none;border:none;color:var(--text3);font-size:20px;padding:0 14px;cursor:pointer;letter-spacing:2px;flex-shrink:0;align-self:stretch;display:flex;align-items:center" onmouseenter="this.style.color=&#39;var(--text)&#39;" onmouseleave="this.style.color=&#39;var(--text3)&#39;">⋯</button>
+    </div><div style="display:flex;align-items:center;border-top:1px solid var(--border)" ontouchstart="this.querySelector(&#39;.pr&#39;).style.background=&#39;var(--s2)&#39;" ontouchend="this.querySelector(&#39;.pr&#39;).style.background=&#39;&#39;">
+      <div class="pr" onclick="navTo(&#39;person&#39;,&#39;p2&#39;)" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; flex: 1 1 0%; min-width: 0px;" onmouseenter="this.style.background=&#39;var(--s2)&#39;" onmouseleave="this.style.background=&#39;&#39;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#4cc9f0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0">L</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+            <span style="font-size:15px;font-weight:600">Lily</span>
+            <span style="font-size:14px;font-weight:700;color:#06d6a0">1261 DKK</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div style="flex:1;height:4px;background:var(--s3);border-radius:2px;overflow:hidden">
+              <div style="height:100%;width:15.905266666666664%;background:#06d6a0;border-radius:2px"></div>
+            </div>
+            <span style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">brugt 239 DKK · 253 CNY</span>
+          </div>
+        </div>
+        <div style="color:var(--text3);font-size:18px;flex-shrink:0;margin-left:4px">›</div>
+      </div>
+      <button onclick="openHomePersonMenu(&#39;p2&#39;)" style="background:none;border:none;color:var(--text3);font-size:20px;padding:0 14px;cursor:pointer;letter-spacing:2px;flex-shrink:0;align-self:stretch;display:flex;align-items:center" onmouseenter="this.style.color=&#39;var(--text)&#39;" onmouseleave="this.style.color=&#39;var(--text3)&#39;">⋯</button>
+    </div><div onclick="openNewPersonModal()" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--border); cursor: pointer;" onmouseenter="this.style.background=&#39;var(--s2)&#39;" onmouseleave="this.style.background=&#39;&#39;" ontouchstart="this.style.background=&#39;var(--s2)&#39;" ontouchend="this.style.background=&#39;&#39;">
+    <div style="width:40px;height:40px;border-radius:50%;background:var(--s3);border:2px dashed var(--text3);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text3);flex-shrink:0">＋</div>
+    <span style="font-size:15px;font-weight:500;color:var(--text3)">Tilføj ny profil</span>
+  </div></div></div>
 </div>
 
 <!-- ══ SCREEN: PERSON VIEW ══ -->
 <div class="screen" id="screen-person">
   <div class="pv-header">
     <div class="pv-top">
-      <button class="pv-back" onclick="navTo('home')">‹</button>
+      <button class="pv-back" onclick="navTo(&#39;home&#39;)">‹</button>
       <button class="pv-menu" onclick="openPersonMenu()" id="pvMenuBtn">⋯</button>
     </div>
     <div class="pv-avatar-row">
@@ -258,8 +281,8 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
   <div class="pv-summary" id="pvSummary"></div>
   <div class="pv-progress"><div class="pv-progress-fill" id="pvProgressFill"></div></div>
   <div class="pv-tabs">
-    <button class="pv-tab active" id="pvTabAdd" onclick="switchPVTab('add')">➕ Tilføj</button>
-    <button class="pv-tab" id="pvTabHistory" onclick="switchPVTab('history')">📋 Historik</button>
+    <button class="pv-tab active" id="pvTabAdd" onclick="switchPVTab(&#39;add&#39;)">➕ Tilføj</button>
+    <button class="pv-tab" id="pvTabHistory" onclick="switchPVTab(&#39;history&#39;)">📋 Historik</button>
   </div>
   <div class="scroll-area" id="pvContent"></div>
 </div>
@@ -267,7 +290,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 <!-- ══ SCREEN: CALCULATOR ══ -->
 <div class="screen" id="screen-calc">
   <div class="topbar">
-    <div class="topbar-logo" onclick="navTo('home')" style="cursor:pointer">Trip<span>Budget</span></div>
+    <div class="topbar-logo" onclick="navTo(&#39;home&#39;)" style="cursor:pointer">Trip<span>Budget</span></div>
     <span style="font-size:12px;color:var(--text3)">Omregner</span>
   </div>
   <div class="scroll-area">
@@ -284,21 +307,21 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
       </div>
       <div class="quick-amounts" id="quickAmounts"></div>
       <div class="calc-keypad">
-        <button class="calc-key" onclick="calcKey('7')">7</button>
-        <button class="calc-key" onclick="calcKey('8')">8</button>
-        <button class="calc-key" onclick="calcKey('9')">9</button>
-        <button class="calc-key action" onclick="calcKey('C')">C</button>
-        <button class="calc-key" onclick="calcKey('4')">4</button>
-        <button class="calc-key" onclick="calcKey('5')">5</button>
-        <button class="calc-key" onclick="calcKey('6')">6</button>
-        <button class="calc-key action" onclick="calcKey('⌫')">⌫</button>
-        <button class="calc-key" onclick="calcKey('1')">1</button>
-        <button class="calc-key" onclick="calcKey('2')">2</button>
-        <button class="calc-key" onclick="calcKey('3')">3</button>
-        <button class="calc-key" onclick="calcKey('+')">+50</button>
-        <button class="calc-key wide" onclick="calcKey('0')">0</button>
-        <button class="calc-key" onclick="calcKey('.')">.</button>
-        <button class="calc-key" onclick="calcKey('-')">-10</button>
+        <button class="calc-key" onclick="calcKey(&#39;7&#39;)">7</button>
+        <button class="calc-key" onclick="calcKey(&#39;8&#39;)">8</button>
+        <button class="calc-key" onclick="calcKey(&#39;9&#39;)">9</button>
+        <button class="calc-key action" onclick="calcKey(&#39;C&#39;)">C</button>
+        <button class="calc-key" onclick="calcKey(&#39;4&#39;)">4</button>
+        <button class="calc-key" onclick="calcKey(&#39;5&#39;)">5</button>
+        <button class="calc-key" onclick="calcKey(&#39;6&#39;)">6</button>
+        <button class="calc-key action" onclick="calcKey(&#39;⌫&#39;)">⌫</button>
+        <button class="calc-key" onclick="calcKey(&#39;1&#39;)">1</button>
+        <button class="calc-key" onclick="calcKey(&#39;2&#39;)">2</button>
+        <button class="calc-key" onclick="calcKey(&#39;3&#39;)">3</button>
+        <button class="calc-key" onclick="calcKey(&#39;+&#39;)">+50</button>
+        <button class="calc-key wide" onclick="calcKey(&#39;0&#39;)">0</button>
+        <button class="calc-key" onclick="calcKey(&#39;.&#39;)">.</button>
+        <button class="calc-key" onclick="calcKey(&#39;-&#39;)">-10</button>
       </div>
     </div>
     <div class="card">
@@ -320,13 +343,13 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
 
 <!-- ══ BOTTOM NAV ══ -->
 <nav class="bottom-nav">
-  <button class="nav-btn active" id="nav-home" onclick="navTo('home')"><span class="ni">🏠</span><span class="nl">Hjem</span></button>
-  <button class="nav-btn" id="nav-calc" onclick="navTo('calc')"><span class="ni">🧮</span><span class="nl">Omregner</span></button>
-  <button class="nav-btn" id="nav-settings" onclick="navTo('settings')"><span class="ni">⚙️</span><span class="nl">Indstil</span></button>
+  <button class="nav-btn active" id="nav-home" onclick="navTo(&#39;home&#39;)"><span class="ni">🏠</span><span class="nl">Hjem</span></button>
+  <button class="nav-btn" id="nav-calc" onclick="navTo(&#39;calc&#39;)"><span class="ni">🧮</span><span class="nl">Omregner</span></button>
+  <button class="nav-btn" id="nav-settings" onclick="navTo(&#39;settings&#39;)"><span class="ni">⚙️</span><span class="nl">Indstil</span></button>
 </nav>
 
 <!-- FAB for adding entries inside person view -->
-<button class="add-fab" id="addFab" onclick="switchPVTab('add')">＋</button>
+<button class="add-fab" id="addFab" onclick="switchPVTab(&#39;add&#39;)">＋</button>
 
 <!-- ══ MODALS ══ -->
 <div class="modal-overlay" id="personMenuModal"><div class="modal-box"><div id="personMenuContent"></div></div></div>
@@ -356,7 +379,6 @@ const AVATAR_COLORS=['#ff6b6b','#ffd166','#06d6a0','#4cc9f0','#c77dff','#f4a261'
 // STATE
 // ══════════════════════════════════════════════
 const DEFAULTS={
-  apiKey:'',
   persons:[],
   entries:[],
   customRates:{}
@@ -378,7 +400,6 @@ let currentPVTab='add';
 let settingsDraft=null;
 let editingEntryId=null;
 let historyFilter='Alle';
-let uploadMode='cam';
 
 // ══════════════════════════════════════════════
 // NAVIGATION
@@ -539,29 +560,6 @@ function renderAddTab(p){
   const catOptions=p.categories.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
   const today=new Date().toISOString().split('T')[0];
   document.getElementById('pvContent').innerHTML=`
-    <div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">
-      <div class="upload-tabs">
-        <button class="upload-tab active" id="tabCam" onclick="switchUploadTab('cam')">📷 Kamera</button>
-        <button class="upload-tab" id="tabGallery" onclick="switchUploadTab('gallery')">🖼 Galleri</button>
-        <div id="onlineIndicator" style="display:flex;align-items:center;gap:5px;padding:0 12px;margin-left:auto;flex-shrink:0">
-          <div id="onlineDot" style="width:8px;height:8px;border-radius:50%;background:#06d6a0;box-shadow:0 0 6px #06d6a0;flex-shrink:0;transition:all .3s"></div>
-          <span id="onlineLabel" style="font-size:11px;color:var(--text3);white-space:nowrap">Online</span>
-        </div>
-      </div>
-      <div class="upload-body">
-        <div style="position:relative">
-          <img id="previewImg" class="preview-img">
-          <button id="clearImgBtn" onclick="clearPreviewImage()" style="display:none;position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;line-height:1">✕</button>
-        </div>
-        <div class="ai-processing" id="aiProcessing"><span class="spin">⟳</span>Analyserer…</div>
-        <div class="ai-suggestion" id="aiSuggestion"><div class="ai-tag">✦ AI foreslår</div><div id="aiSuggContent"></div></div>
-        <label class="upload-trigger" id="uploadTrigger" for="camInput">
-          <span class="ui">📷</span><span class="ut">Tag billede af prisskiltet</span><span class="us">AI aflæser pris og navn automatisk</span>
-        </label>
-        <input type="file" id="camInput" accept="image/*" capture="environment">
-        <input type="file" id="galleryInput" accept="image/*">
-      </div>
-    </div>
     <div class="card">
       <div class="section-label" style="margin-bottom:12px">Detaljer</div>
       <div class="field-wrap">
@@ -584,30 +582,9 @@ function renderAddTab(p){
       </div>
       <button class="btn-primary" onclick="submitEntry()">Tilføj køb ➜</button>
     </div>`;
-
-  // Re-attach file listeners
-  document.getElementById('camInput').addEventListener('change',function(e){handleImageFile(e.target.files[0]);this.value=''});
-  document.getElementById('galleryInput').addEventListener('change',function(e){handleImageFile(e.target.files[0]);this.value=''});
-  updateOnlineStatus();
 }
 
-function clearPreviewImage(){
-  const img=document.getElementById('previewImg');
-  const btn=document.getElementById('clearImgBtn');
-  const trigger=document.getElementById('uploadTrigger');
-  const sugg=document.getElementById('aiSuggestion');
-  const proc=document.getElementById('aiProcessing');
-  if(img){img.src='';img.style.display='none';}
-  if(btn)btn.style.display='none';
-  if(trigger)trigger.style.display='flex';
-  if(sugg)sugg.style.display='none';
-  if(proc)proc.style.display='none';
-  // Reset file inputs so same file can be picked again
-  const cam=document.getElementById('camInput');
-  const gal=document.getElementById('galleryInput');
-  if(cam)cam.value='';
-  if(gal)gal.value='';
-}
+function submitEntry(){
   const name=document.getElementById('entryName')?.value.trim();
   const price=parseFloat(document.getElementById('entryPrice')?.value);
   const cat=document.getElementById('entryCat')?.value;
@@ -619,9 +596,6 @@ function clearPreviewImage(){
   saveState();
   document.getElementById('entryName').value='';
   document.getElementById('entryPrice').value='';
-  document.getElementById('previewImg').style.display='none';
-  document.getElementById('aiSuggestion').style.display='none';
-  document.getElementById('uploadTrigger').style.display='flex';
   renderPersonView();
   toast('Tilføjet! ✓');
 }
@@ -1129,77 +1103,6 @@ function createPerson(){
 }
 
 // ══════════════════════════════════════════════
-// IMAGE / AI
-// ══════════════════════════════════════════════
-function switchUploadTab(mode){
-  uploadMode=mode;
-  const isCam=mode==='cam';
-  document.getElementById('tabCam')?.classList.toggle('active',isCam);
-  document.getElementById('tabGallery')?.classList.toggle('active',!isCam);
-  const t=document.getElementById('uploadTrigger');
-  if(!t)return;
-  t.setAttribute('for',isCam?'camInput':'galleryInput');
-  t.querySelector('.ui').textContent=isCam?'📷':'🖼';
-  t.querySelector('.ut').textContent=isCam?'Tag billede af prisskiltet':'Vælg billede fra galleriet';
-  t.querySelector('.us').textContent=isCam?'AI aflæser pris og navn automatisk':'Vælg et billede du allerede har taget';
-}
-async function handleImageFile(file){
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=async(ev)=>{
-    const img=document.getElementById('previewImg');
-    if(img){img.src=ev.target.result;img.style.display='block';}
-    const btn=document.getElementById('clearImgBtn');
-    if(btn)btn.style.display='block';
-    const trigger=document.getElementById('uploadTrigger');
-    if(trigger)trigger.style.display='none';
-    if(!S.apiKey&&false){toast('Tilføj API-nøgle i Indstillinger');return}
-    const proc=document.getElementById('aiProcessing');
-    const sugg=document.getElementById('aiSuggestion');
-    if(proc)proc.style.display='block';
-    if(sugg)sugg.style.display='none';
-    try{
-      const b64=ev.target.result.split(',')[1];
-      const result=await callVisionAPI(b64,file.type||'image/jpeg');
-      if(proc)proc.style.display='none';
-      if(result&&sugg){
-        sugg.style.display='block';
-        document.getElementById('aiSuggContent').innerHTML=`
-          <div style="margin-bottom:8px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">Navn</div>
-          <input class="field-input" id="aiName" value="${esc(result.name)}" style="font-size:14px;padding:10px 12px"></div>
-          <div style="margin-bottom:12px"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">Pris</div>
-          <input class="field-input" id="aiPrice" value="${result.price}" type="number" step="0.01" style="font-size:14px;padding:10px 12px"></div>
-          <button class="btn-primary" style="padding:12px" onclick="applyAI()">Brug dette ➜</button>`;
-      }
-    }catch{if(proc)proc.style.display='none';toast('Kunne ikke aflæse billedet 😕')}
-  };
-  reader.readAsDataURL(file);
-}
-async function callVisionAPI(b64,mime){
-  const WORKER='https://tripbudget-api.peterlambek.workers.dev/';
-  const res=await fetch(WORKER,{method:'POST',
-    headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
-    body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:150,messages:[{role:'user',content:[
-      {type:'image',source:{type:'base64',media_type:mime,data:b64}},
-      {type:'text',text:'Look at this price tag or product image. Extract the item name and price. Reply ONLY with valid JSON, no markdown: {"name":"item name","price":9.99}. Use 0 if no price visible.'}
-    ]}]})});
-  const data=await res.json();
-  if(data.error)throw new Error(data.error.message);
-  return JSON.parse(data.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim());
-}
-function applyAI(){
-  const n=document.getElementById('aiName')?.value||'';
-  const p=document.getElementById('aiPrice')?.value||'';
-  const nameEl=document.getElementById('entryName');
-  const priceEl=document.getElementById('entryPrice');
-  if(nameEl)nameEl.value=n;
-  if(priceEl)priceEl.value=p;
-  const sugg=document.getElementById('aiSuggestion');
-  if(sugg)sugg.style.display='none';
-  toast('Udfyldt fra billede ✓');
-}
-
-// ══════════════════════════════════════════════
 // CALCULATOR
 // ══════════════════════════════════════════════
 let calcInput='0',calcFromCur='EUR',calcToCur='DKK';
@@ -1259,14 +1162,7 @@ function openPersonSettings(id){navTo('settings');setTimeout(()=>{const idx=S.pe
 
 function buildSettingsHTML(){
   const el=document.getElementById('settingsContent');
-  let html=`<div class="api-section">
-    <div class="api-label">🤖 AI Scanning</div>
-    <div class="api-sub" style="display:flex;align-items:center;gap:8px">
-      <div style="width:10px;height:10px;border-radius:50%;background:#06d6a0;box-shadow:0 0 6px #06d6a0;flex-shrink:0"></div>
-      AI scanning er aktiveret for alle brugere automatisk.
-    </div>
-  </div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+  let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
     <span class="section-label">Personer & budgetter</span>
   </div>`;
 
@@ -1402,16 +1298,6 @@ function saveSettings(){
   if(currentPersonId&&!S.persons.find(p=>p.id===currentPersonId))currentPersonId=S.persons[0]?.id||null;
   saveState();toast('Gemt! ✓');navTo(currentPersonId?'person':'home');
 }
-function updateApiKey(val){
-  S.apiKey=val;saveState();
-  const st=document.getElementById('apiStatus');
-  if(val.startsWith('sk-ant')){st.textContent='✓ Nøgle gemt';st.className='api-status ok'}
-  else if(val){st.textContent='Ser ikke ud som en gyldig nøgle';st.className='api-status err'}
-  else{st.textContent='';st.className='api-status'}
-}
-let apiVis=false;
-function toggleApiVis(){apiVis=!apiVis;document.getElementById('apiKeyInput').type=apiVis?'text':'password'}
-
 // ══════════════════════════════════════════════
 // MODAL HELPERS
 // ══════════════════════════════════════════════
@@ -1551,29 +1437,6 @@ function copyTripCode(){
 }
 
 // ══════════════════════════════════════════════
-// ONLINE / OFFLINE INDICATOR
-// ══════════════════════════════════════════════
-function updateOnlineStatus(){
-  const ready=navigator.onLine;
-  const dot=document.getElementById('onlineDot');
-  const label=document.getElementById('onlineLabel');
-  if(!dot||!label)return;
-  if(ready){
-    dot.style.background='#06d6a0';
-    dot.style.boxShadow='0 0 6px #06d6a0';
-    label.textContent='AI klar';
-    label.style.color='var(--text3)';
-  } else {
-    dot.style.background='#ff6b6b';
-    dot.style.boxShadow='0 0 6px #ff6b6b';
-    label.textContent='Offline — AI ikke tilgængelig';
-    label.style.color='var(--red)';
-  }
-}
-window.addEventListener('online',  updateOnlineStatus);
-window.addEventListener('offline', updateOnlineStatus);
-
-// ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
 npColor=AVATAR_COLORS[0];
@@ -1589,5 +1452,6 @@ if(tripCode){
 
 renderHome();
 </script>
-</body>
-</html>
+
+
+</body></html>
